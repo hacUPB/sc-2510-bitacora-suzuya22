@@ -403,242 +403,265 @@ D = D - 7
 D;JEQ
 ```
 ## Analiza el siguiente programa en lenguaje de máquina:
-0100000000000000
-1110110000010000
-0000000000010000
-1110001100001000
-0110000000000000
-1111110000010000
-0000000000010011
-1110001100000101
-0000000000010000
-1111110000010000
-0100000000000000
-1110010011010000
-0000000000000100
-1110001100000110
-0000000000010000
-1111110010101000
-1110101010001000
-0000000000000100
-1110101010000111
-0000000000010000
-1111110000010000
-0110000000000000
-1110010011010000
-0000000000000100
-1110001100000011
-0000000000010000
-1111110000100000
-1110111010001000
-0000000000010000
-1111110111001000
-0000000000000100
-1110101010000111
+0100000000000000    
+1110110000010000    
+0000000000010000    
+1110001100001000    
+0110000000000000    
+1111110000010000    
+0000000000010011    
+1110001100000101    
+0000000000010000    
+1111110000010000    
+0100000000000000    
+1110010011010000    
+0000000000000100    
+1110001100000110    
+0000000000010000    
+1111110010101000    
+1110101010001000    
+0000000000000100        
+1110101010000111    
+0000000000010000    
+1111110000010000    
+0110000000000000    
+1110010011010000    
+0000000000000100    
+1110001100000011    
+0000000000010000    
+1111110000100000    
+1110111010001000    
+0000000000010000    
+1111110111001000    
+0000000000000100    
+1110101010000111    
 
-### ¿Qué hace este programa?
-Línea 1: 0100000000000000
-Esta es una A-instrucción que contiene la dirección 0 (A = 0).solo carga la dirección en el registro A. 
+## ¿Qué hace este programa?  
+@16384   
+D=A      // Asigna el valor 16384 al registro D.
 
-Línea 2: 1110110000010000
-Es una C-instrucción 
+@16     
+M=D      // Guarda el valor de D (16384) en la dirección de memoria RAM[16].  
 
-111 indica que es una instrucción de tipo C.
-011000 es la operación a realizar, que representa "D = D + A".
-001 indica el destino D.
-000 indica que no hay salto.
-Esta instrucción realiza una suma entre D y A, y almacena el resultado en D.
+@24576  
+D=M      // Carga en D el valor almacenado en la dirección RAM[24576] (que es la dirección del teclado en Hack).  
 
-Línea 3: 0000000000010000
-Es una A-instrucción que carga la dirección 32 en el registro A (A = 32).
+@19  
+D;JNE    // Si D no es igual a 0 (es decir, si se está presionando una tecla), salta a la línea 19.  
 
-Línea 4: 1110001100001000
-Es una C-instrucción. Desglosándola:
+@16  
+D=M      // Carga en D el valor de la RAM[16] (que originalmente guardaba 16384).  
 
-111 indica que es una instrucción de tipo C.
-000110 representa la operación "D = D - A".
-001 es el destino D.
-000 no hay salto.
-Esta instrucción realiza una resta entre D y A, y almacena el resultado en D.
+@16384  
+D=D-A    // Resta D - 16384. Si D es menor o igual a 0, significa que la posición ya está en el límite superior.  
 
-Línea 5: 0110000000000000
-Es una A-instrucción que carga la dirección 0 en A (A = 0).
+@4  
+D;JLE    // Si el resultado de la resta es menor o igual a 0, salta a la línea 4 (probablemente para reiniciar el cursor).  
 
-Línea 6: 1111110000010000
-Es una C-instrucción. Desglosando:
+@16  
+AM=M-1   // Resta 1 al valor almacenado en RAM[16] y actualiza tanto A como M.  
 
-111 indica que es de tipo C.
-111000 realiza la operación "D = -1".
-001 indica el destino D.
-000 no hay salto.
-Esta instrucción asigna -1 al registro D.
+M=0      // Escribe 0 en la posición de memoria RAM[16].  
 
-Línea 7: 0000000000010011
-Es una A-instrucción que carga la dirección 35 en A (A = 35).
+@32  
+0;JMP    // Salta incondicionalmente a la línea 32.  
 
-Línea 8: 1110001100000101
-Es una C-instrucción. Desglosando:
+@16  
+D=M      // Carga en D el valor de RAM[16].  
 
-111 indica que es de tipo C.
-000110 representa la operación "D = D - A".
-001 es el destino D.
-000 no hay salto.
-Esta instrucción realiza una resta entre D y A, y almacena el resultado en D.
+@24576  
+D=D-A    // Resta el valor de la dirección del teclado (24576) al contenido de RAM[16].  
 
-Línea 9: 0000000000010000
-Es una A-instrucción que carga la dirección 32 en A (A = 32).
+@4  
+D;JGE    // Si D es mayor o igual a 0, salta a la línea 4 (probablemente para manejar otro caso de límite).  
 
-Línea 10: 1111110000010000
-Es una C-instrucción igual a la anterior en la línea 6, que asigna -1 a D.
+@16  
+A=M      // Usa el valor de RAM[16] como dirección de memoria y lo almacena en A.  
 
+M=-1     // Escribe -1 en la dirección de memoria determinada por RAM[16]. Esto probablemente enciende un píxel en la pantalla.  
+
+@16  
+#ERR      // Parece un comentario o marcador de error.  
+
+@4  
+0;JMP    // Salta incondicionalmente a la línea 4, lo que podría ser para reiniciar el proceso o manejar una condición de error.  
+ 
 ## Implementa un programa en lenguaje ensamblador que dibuje el bitmap que diseñaste en la pantalla solo si se presiona la tecla “d”.
 
-``` AMS
+@SCREEN 
+D=A 
+@R12    
+AD=D+M  
+@8129   
+D=D+A   
+A=D-A   
+M=A-D   
+AD=A+1  
+@7  
+D=D+A   
+A=D-A   
+M=D-A   
+D=A 
+@31 
+AD=D+A  
+@8129   
+D=D+A   
+A=D-A   
+M=A-D   
+AD=A+1  
+@7  
+D=D+A   
+A=D-A   
+M=D-A   
+D=A 
+@31 
+AD=D+A  
+@8129   
+D=D+A   
+A=D-A   
+M=A-D   
+AD=A+1  
+@7  
+D=D+A   
+A=D-A   
+M=D-A   
+D=A 
+@31 
+AD=D+A  
+@8129   
+D=D+A   
+A=D-A   
+M=A-D   
+AD=A+1  
+@7  
+D=D+A   
+A=D-A   
+M=D-A   
+D=A 
+@31 
+AD=D+A  
+@8129   
+D=D+A   
+A=D-A   
+M=A-D   
+AD=A+1  
+@7  
+D=D+A   
+A=D-A   
+M=D-A   
+D=A 
+@31 
+AD=D+A  
+@8128   
+D=D+A   
+A=D-A   
+M=D-A   
+D=A 
+@32 
+AD=D+A  
+@8128   
+D=D+A   
+A=D-A   
+M=D-A   
+D=A 
+@32 
+AD=D+A  
+@8128   
+D=D+A   
+A=D-A   
+M=D-A   
+D=A 
+@32 
+AD=D+A  
+@4  
+D=D+A   
+A=D-A   
+M=A-D   
+AD=A+1  
+M=1 
+D=A 
+@31 
+AD=D+A  
+@4  
+D=D+A   
+A=D-A   
+M=A-D   
+AD=A+1  
+M=1 
+D=A 
+@31 
+AD=D+A  
+@4  
+D=D+A   
+A=D-A   
+M=A-D   
+AD=A+1  
+M=1 
+D=A 
+@31 
+AD=D+A  
+@4  
+D=D+A   
+A=D-A   
+M=A-D   
+AD=A+1  
+M=1 
+D=A 
+@31 
+AD=D+A  
+@4  
+D=D+A   
+A=D-A   
+M=A-D   
+AD=A+1  
+M=1 
+D=A 
+@31 
+AD=D+A  
+@4  
+D=D+A   
+A=D-A   
+M=A-D   
+AD=A+1  
+M=1 
+D=A 
+@31 
+AD=D+A  
+@4  
+D=D+A   
+A=D-A   
+M=A-D   
+AD=A+1  
+M=1 
+D=A 
+@31 
+AD=D+A  
+@8132   
+D=D+A   
+A=D-A   
+M=A-D   
+AD=A+1  
+M=1 
+D=A 
+@31 
+AD=D+A  
+@8132   
+D=D+A   
+A=D-A   
+M=A-D   
+AD=A+1  
+M=1 
+D=A 
+@31 
+AD=D+A  
+@8132   
+D=D+A   
+A=D-A   
+M=A-D   
+AD=A+1  
+M=1 
+@R13    
+A=M 
+D;JMP   
 
-@KBD          // Dirección de memoria del teclado
-D=M           // Cargar el valor de KBD en D
-@checkD       // Etiqueta para verificar si "d" está presionado
-D;JEQ         // Si D es 0 (no presionado), saltar a la etiqueta checkD
-
-
-@16384        // Dirección base para dibujar en la pantalla
-D=A           // Asignar la dirección base en D
-@memAddress   // Guardar la dirección base en memAddress
-M=D           // memAddress = 16384
-
-
-
-@memAddress
-D=M
-@252
-M=D
-@memAddress+32
-D=M
-@252
-M=D
-@memAddress+64
-D=M
-@252
-M=D
-@memAddress+96
-D=M
-@252
-M=D
-@memAddress+128
-D=M
-@252
-M=D
-@memAddress+160
-D=M
-@252
-M=D
-@memAddress+192
-D=M
-@252
-M=D
-@memAddress+352
-D=M
-@-8192
-M=D
-@memAddress+384
-D=M
-@15360
-M=D
-@memAddress+416
-D=M
-@896
-M=D
-@memAddress+448
-D=M
-@252
-M=D
-@memAddress+480
-D=M
-@7
-M=D
-@memAddress+512
-D=M
-@31
-M=D
-@memAddress+544
-D=M
-@992
-M=D
-@memAddress+576
-D=M
-@-1024
-M=D
-@memAddress+608
-D=M
-@32767
-M=D
-
-
-@memAddress+1
-D=M
-@126
-M=D
-@memAddress+33
-D=M
-@126
-M=D
-@memAddress+65
-D=M
-@126
-M=D
-@memAddress+97
-D=M
-@126
-M=D
-@memAddress+129
-D=M
-@126
-M=D
-@memAddress+161
-D=M
-@126
-M=D
-@memAddress+193
-D=M
-@126
-M=D
-@memAddress+257
-D=M
-@96
-M=D
-@memAddress+289
-D=M
-@48
-M=D
-@memAddress+321
-D=M
-@15
-M=D
-@memAddress+609
-D=M
-@3
-M=D
-@memAddress+641
-D=M
-@14
-M=D
-@memAddress+673
-D=M
-@56
-M=D
-@memAddress+705
-D=M
-@480
-M=D
-
-@END       
-0;JMP
-
-// 
-(checkD)
-@END
-0;JMP
-```
-
-
-
+a
