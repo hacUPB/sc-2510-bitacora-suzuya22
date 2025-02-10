@@ -82,6 +82,3 @@ Los datos e instrucciones se almacenan en la RAM.
 La CPU obtiene una instrucción de la memoria, la decodifica y la ejecuta.
 Los resultados se almacenan en la RAM o en un dispositivo de almacenamiento.
 El usuario ve los resultados a través de un dispositivo de salida.  
-
-
--En esencia, un computador digital moderno es una máquina programable que transforma datos en resultados mediante la ejecución rápida y precisa de instrucciones binarias.
