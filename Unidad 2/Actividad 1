@@ -1,0 +1,30 @@
+### ¿Qué es la entrada-salida mapeada a memoria?    
+La arquitectura Hack cuenta con un concepto de INPUT/OUTPUT, que corresponde a entrada y salida en español. Este concepto se refiere a dos dispositivos externos que pueden interactuar con la computadora Hack: el teclado (input) y la pantalla (output). Ambos dispositivos están mapeados a direcciones específicas dentro de la memoria RAM, lo que permite que se acceda a ellos de la misma manera que a cualquier otra dirección de memoria normal.
+
+### ¿Cómo se implementa en la plataforma Hack?
+
+#### Pantalla en la arquitectura Hack
+La pantalla en Hack es un dispositivo de salida que representa una cuadrícula de celdas organizadas en filas y columnas. Cada celda corresponde a un pixel en la pantalla y su estado (encendido o apagado) está determinado por el valor binario almacenado en la RAM. 
+En la arquitectura Hack, la pantalla comienza en la dirección de 16384 A partir de esta dirección, los siguientes espacios de memoria están reservados para representar los pixeles de la pantalla. 
+
+La pantalla Hack tiene una resolución de 512×256 pixeles.   
+Cada dirección de memoria representa 16 pixeles en una fila.    
+Se utilizan 32 filas de memoria (porque 512÷16=32512÷16=32).    
+En total, la pantalla ocupa 8192 direcciones de memoria (512×256÷16512×256÷16).
+
+Cada celda de la pantalla está representada por una dirección en la RAM que almacena un número de 16 bits. Este número determina qué 16 pixeles consecutivos estarán encendidos (1) o apagados (0).
+
+#### Teclado en la arquitectura Hack    
+El teclado en Hack es el dispositivo de entrada. Se asigna a una única dirección de memoria:    
+ Decimal 24576
+ 
+ #### Cómo funciona
+ Cuando un usuario presiona una tecla, su código ASCII se almacena en la dirección de memoria 24576
+ Si no hay ninguna tecla presionada, la dirección almacena 0.
+ Al soltar la tecla, la dirección vuelve a 0.
+
+ La CPU lee la memoria en 24576 para detectar qué tecla se ha presionado.
+El software del sistema interpreta el valor ASCII y ejecuta la acción correspondiente.
+Para la salida en pantalla, la CPU actualiza la memoria a partir de la dirección 16384 para reflejar los cambios visuales en la pantalla.
+Cada cambio en la memoria de la pantalla se traduce en un cambio en los pixeles de la cuadrícula.
+
