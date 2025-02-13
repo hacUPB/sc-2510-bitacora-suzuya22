@@ -28,3 +28,70 @@ El software del sistema interpreta el valor ASCII y ejecuta la acción correspon
 Para la salida en pantalla, la CPU actualiza la memoria a partir de la dirección 16384 para reflejar los cambios visuales en la pantalla.
 Cada cambio en la memoria de la pantalla se traduce en un cambio en los pixeles de la cuadrícula.
 
+### Inventa un programa que haga uso de la entrada-salida mapeada a memoria.
+
+``` asm
+// Dirección de memoria del teclado
+@KBD
+D=M      // Leer el valor del teclado en D
+
+// Si no se presiona ninguna tecla, limpiar la pantalla
+@SIN_TECLA
+D;JEQ    // Si D == 0, ir a SIN_TECLA
+
+// Si hay una tecla presionada, dibujar un cuadrado
+@PANTALLA
+D=A
+@direccion
+M=D      // Guardar la dirección de inicio de la pantalla en direccion
+
+@8192    // Número total de palabras de la pantalla (256 filas * 32 columnas)
+D=A
+@contador
+M=D      // Inicializar contador
+
+(LLENAR_BUCLE)
+@direccion
+A=M      // Obtener dirección actual de la pantalla
+M=-1     // Escribir 0xFFFF (blanco) en la pantalla
+
+@direccion
+M=M+1    // Incrementar la dirección de pantalla
+@contador
+MD=M-1   // Decrementar el contador
+@LLENAR_BUCLE
+D;JGT    // Repetir hasta llenar la pantalla
+
+@FIN
+0;JMP    // Saltar al final
+
+(SIN_TECLA)
+@PANTALLA
+D=A
+@direccion
+M=D      // Guardar dirección de inicio de la pantalla en direccion
+
+@8192    // Número total de palabras de la pantalla
+D=A
+@contador
+M=D      // Inicializar contador
+
+(LIMPIAR_BUCLE)
+@direccion
+A=M      // Obtener dirección actual de la pantalla
+M=0      // Escribir 0 (negro) en la pantalla
+
+@direccion
+M=M+1    // Incrementar la dirección de pantalla
+@contador
+MD=M-1   // Decrementar el contador
+@LIMPIAR_BUCLE
+D;JGT    // Repetir hasta limpiar la pantalla
+
+@FIN
+0;JMP    // Saltar al final
+
+(FIN)
+@FIN
+0;JMP    // Bucle infinito
+```
