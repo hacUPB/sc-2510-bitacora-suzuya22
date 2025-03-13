@@ -1,138 +1,251 @@
-### Reto 1: Sumar los primeros 100 números naturales con While
-``` asm
-@1
-D=A
-@i
-M=D
-
-@0
-D=A
-@sum
-M=D
-
-(WHILE_LOOP)
-@i
-D=M
-@101
-D=D-A
-@END_LOOP
-D;JGE
-
-@i
-D=M
-@sum
-M=M+D
-
-@i
-M=M+1
-
-@WHILE_LOOP
-0;JMP
-
-(END_LOOP)
-@END_LOOP
-0;JMP
-```
-### Reto 2: Implementar con For en vez de While
+### reto 1
 ``` asm
 @0
-D=A
+D=A         // D = 0 (acumulador de suma)
 @sum
-M=D
+M=D         // sum = 0
 
 @1
-D=A
+D=A         // D = 1 (contador)
 @i
-M=D
+M=D         // i = 1
 
-(FOR_LOOP)
-@i
-D=M
-@101
-D=D-A
-@END_FOR
-D;JGE
+(LOOP)
+    @i
+    D=M     // D = i
+    @100
+    D=D-A   // D = i - 100
+    @END
+    D;JGT   // Si i > 100, saltar a END
 
-@i
-D=M
-@sum
-M=M+D
+    @i
+    D=M     // D = i
+    @sum
+    M=M+D   // sum += i
 
-@i
-M=M+1
+    @i
+    M=M+1   // i++
 
-@FOR_LOOP
-0;JMP
+    @LOOP
+    0;JMP   // Repetir el ciclo
 
-(END_FOR)
-@END_FOR
-0;JMP
+(END)
+    @END
+    0;JMP   // Bucle infinito al final
 ```
-### Reto 3: Uso de punteros
+¿Cómo están implementadas las variables i y sum?
+
+Las variables i y sum están implementadas como posiciones en la RAM con etiquetas (@i y @sum).
+Se almacenan en la memoria RAM en posiciones asignadas automáticamente por el ensamblador.
+¿En qué direcciones de memoria están estas variables?
+
+En Nand2Tetris, las variables suelen almacenarse desde la dirección 16 en adelante (ya que las direcciones 0 a 15 están reservadas para registros predefinidos y periféricos).
+i y sum se almacenarán en direcciones RAM a partir de 16 (@i y @sum).
+¿Cómo está implementado el ciclo while?
+
+Se usa una etiqueta (LOOP) como punto de inicio del ciclo.
+Se compara i con 100 (D = i - 100).
+Si i > 100, salta a END, terminando el ciclo.
+Si no, suma i a sum, incrementa i, y vuelve a LOOP.
+¿Cómo se implementa la variable i?
+
+Se declara en memoria (@i) y se inicializa con 1 (M=D).
+Se incrementa en cada iteración del ciclo con M=M+1.
+¿En qué parte de la memoria se almacena la variable i?
+
+En una dirección de memoria RAM a partir de la posición 16 (por ejemplo, RAM[16]).
+Después de todo lo que has hecho, ¿Qué es entonces una variable?
+
+En ensamblador, una variable es simplemente una posición de memoria donde se guarda un valor que el programa puede modificar.
+¿Qué es la dirección de una variable?
+
+Es la posición en la memoria donde está almacenada la variable (por ejemplo, RAM[16] para i).
+¿Qué es el contenido de una variable?
+
+Es el valor almacenado en la dirección de memoria de la variable (por ejemplo, si i = 5, RAM[16] contendrá 5).
+
+### Prueba del resultado final:
+
+La suma de los primeros 100 números naturales es 5050.
+Al final de la ejecución, RAM[17] (sum) debe contener 5050.
+
+### Transforma el programa en alto nivel anterior para que utilice un ciclo for en vez de un ciclo while.
+
 ``` asm
+int sum = 0;
+for (int i = 1; i <= 100; i++) {
+    sum += i;
+}
+```
+``` asm
+// Inicializar sum = 0
+@0
+D=A        
+@sum
+M=D        
+
+// Inicializar i = 1
+@1
+D=A        
+@i
+M=D        
+
+(LOOP)
+    @i
+    D=M     // D = i
+    @101
+    D=D-A   // D = i - 101 (se usa 101 porque el for termina en 100)
+    @END
+    D;JGE   // Si i >= 101, saltar a END
+
+    @i
+    D=M     // D = i
+    @sum
+    M=M+D   // sum += i
+
+    @i
+    M=M+1   // i++
+
+    @LOOP
+    0;JMP   // Volver al inicio del for
+
+(END)
+    @END
+    0;JMP   // Bucle infinito al final
+```
+
+### punteros
+- ¿Cómo se declara un puntero en C++? `int *p;`. `p` es una variable que    almacenará la dirección de un variable que almacena enteros. 
+
+- ¿Cómo se define un puntero en C++? `p = &a;`. Definir el puntero es inicializar el valor del puntero, es decir, guardar la dirección de una variable. En este caso `p` contendrá la dirección de `a`.
+
+- ¿Cómo se almacena en C++ la dirección de memoria de una variable? Con el operador `&`. `p = &a;`
+
+- ¿Cómo se escribe el contenido de la variable a la que apunta un puntero? Con el operador . `p = 20;`. En este caso como `p` contiene la dirección de `a` entonces `p` a la izquierda del igual indica que quieres actualizar el valor de la variable `a`.
+
+### traducir programa
+``` asm
+int a = 10;
+int *p;
+p = &a;
+*p = 20;
+```
+en ensamblador
+
+``` asm
+// int a = 10;
 @10
 D=A
 @a
 M=D
 
+// int *p;
+@p
+M=0  // Inicializamos p con 0
+
+// p = &a;
 @a
 D=A
 @p
-M=D
+M=D  // p almacena la dirección de a
 
+// *p = 20;
 @20
 D=A
 @p
-A=M
-M=D
+A=M  // Vamos a la dirección almacenada en p
+M=D  // Almacenamos 20 en la dirección a la que apunta p (es decir, en a)
 ```
-### Reto 4: Leer desde un puntero
-``` asm
+
+### reto 7: traducir programa:
+```asm
+int a = 10;
+int b = 5;
+int *p;
+p = &a;
+b = *p;
+```
+Traduccion:
+```asm
+// int a = 10;
 @10
 D=A
 @a
 M=D
 
+// int b = 5;
 @5
 D=A
 @b
 M=D
 
+// int *p;
+@p
+M=0  // Inicializamos p con 0
+
+// p = &a;
 @a
 D=A
 @p
-M=D
+M=D  // Guardamos la dirección de 'a' en 'p'
 
+// b = *p;
 @p
-A=M
-D=M
+A=M  // A ahora tiene la dirección almacenada en 'p' (es decir, la dirección de 'a')
+D=M  // D toma el valor almacenado en esa dirección (el valor de 'a')
 @b
-M=D
+M=D  // Se almacena en 'b' el valor obtenido de '*p'
 ```
-### Reto 5: Implementar la función suma(a, b)
+
+### reto 8
+### ¿Qué hace esto? int *pvar;
+Declara un puntero llamado pvar que almacenará la dirección de memoria de una variable de tipo int.
+Sin embargo, pvar todavía no tiene una dirección asignada, por lo que apunta a un valor indefinido.
+
+### ¿Qué hace esto pvar = var;?
+Esto es un error, a menos que var sea una dirección de memoria válida.
+Si var es un entero, la asignación no tendría sentido porque pvar espera una dirección de memoria, no un valor entero.
+
+### ¿Qué hace esto var2 = *pvar?
+*pvar significa "el contenido de la dirección de memoria a la que apunta pvar".
+var2 tomará el valor almacenado en la dirección de memoria que pvar está señalando.
+Es importante que pvar apunte a una dirección válida antes de usar *pvar, de lo contrario podría haber un error en la ejecución.
+
+### ¿Qué hace esto pvar = &var3?
+&var3 obtiene la dirección de memoria de var3.
+pvar ahora apunta a var3, es decir, almacena la dirección de var3.
+Después de esta asignación, *pvar representará el valor contenido en var3.
+
+### reto 9
+Considera que el punto de entrada del siguiente programa es la función main, es decir, el programa inicia llamando la función main. Vas a proponer una posible traducción a lenguaje ensamblador de la función suma, cómo llamar a suma y cómo regresar a std::cout << "El valor de c es: " << c << std::endl; una vez suma termine.
+```
+#include <iostream>
+
+int suma(int a, int b) {
+   int var = a + b;
+   return var;
+}
+
+
+int main() {
+   int c = suma(6, 9);
+   std::cout << "El valor de c es: " << c << std::endl;
+   return 0;
+}
+```
+
+### funcion suma 
 ``` asm
+(SUMA)
+@R0
+D=M   // D = R0 (a)
 
-@6
-D=A
-@a
-M=D
+@R1
+D=D+M // D = R0 + R1 (a + b)
 
-@9
-D=A
-@b
-M=D
-
-@a
-D=M
-@b
-D=D+M
-
-@c
-M=D
-
-@SCREEN
-M=D
+@R2
+M=D   // R2 = a + b (guardar resultado)
 
 @END
-0;JMP
+0;JMP // Regresar al final
 ```
