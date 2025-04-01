@@ -23,7 +23,7 @@ Caché.
 Contexto en instrucciones: En el ciclo de ejecución de instrucciones, el procesador extrae los datos (D) necesarios para completar una operación, como sumar dos números o mover información de un lugar a otro.
 
 ## A: Acumulador (Accumulator)
-Definición: El A es un registro especial del procesador donde se almacenan temporalmente los resultados de operaciones aritméticas o lógicas.
+Definición: El A es un dato especial del procesador donde se almacenan temporalmente los resultados de operaciones aritméticas o lógicas.
 
 Función:
 

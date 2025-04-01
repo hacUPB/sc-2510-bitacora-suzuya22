@@ -1,1 +1,253 @@
-### Reto 1
+``` js
+
+(INICIO)
+@SCREEN
+   D=A         ; 1: D = A (copia el valor de A en D)
+   @16         ; 2: A = 16 (carga la dirección 16 en A)
+   M=D         ; 3: M = D (almacena el valor de D en la dirección de memoria 16)
+   @24576      ; 4: A = 24576 (carga la dirección 24576 en A, que es la dirección del teclado)
+   D=M         ; 5: D = M (carga el valor en la dirección 24576 en D, que es el estado del teclado)
+   
+   @100        ; Código ASCII de 'D'
+   D = A
+   @24576
+   D = M - D
+   @bitmap
+   D;JEQ       ; Si D = 0, salta a la dirección (bitmap) (si se presiona 'D', salta)
+   
+   @69         ; Código ASCII de 'E'
+   D = A
+   @24576
+   D = M - D
+   @borrar_bitmap
+   D;JEQ       ; Si D = 0, salta a borrar el bitmap si se presiona 'E'
+   
+@INICIO
+0;JMP
+ (bitmap)
+	D=A
+	@R12
+	AD=D+M
+	// row 6
+	@3968 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	AD=A+1 // D holds addr
+	@248 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	// row 7
+	D=A // D holds previous addr
+	@31
+	AD=D+A
+	@3968 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	AD=A+1 // D holds addr
+	@248 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	// row 8
+	D=A // D holds previous addr
+	@31
+	AD=D+A
+	@3968 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	AD=A+1 // D holds addr
+	@248 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	// row 9
+	D=A // D holds previous addr
+	@31
+	AD=D+A
+	@3968 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	AD=A+1 // D holds addr
+	@248 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	// row 10
+	D=A // D holds previous addr
+	@31
+	AD=D+A
+	@3968 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	AD=A+1 // D holds addr
+	@12536 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	// row 11
+	D=A // D holds previous addr
+	@32
+	AD=D+A
+	@8192 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	// row 12
+	D=A // D holds previous addr
+	@31
+	AD=D+A
+	@12 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	AD=A+1 // D holds addr
+	@24576 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	// row 13
+	D=A // D holds previous addr
+	@31
+	AD=D+A
+	@6 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	AD=A+1 // D holds addr
+	@20480 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=A-D // RAM[addr]=-val
+	// row 14
+	D=A // D holds previous addr
+	@31
+	AD=D+A
+	@6 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	AD=A+1 // D holds addr
+	@26624 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=A-D // RAM[addr]=-val
+	AD=A+1 // D holds addr
+	M=1
+	// row 15
+	D=A // D holds previous addr
+	@30
+	AD=D+A
+	@9 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	AD=A+1 // D holds addr
+	@1024 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	// row 16
+	D=A // D holds previous addr
+	@32
+	AD=D+A
+	@1536 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	// row 17
+	D=A // D holds previous addr
+	@31
+	AD=D+A
+	@48 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	AD=A+1 // D holds addr
+	@384 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	// row 18
+	D=A // D holds previous addr
+	@31
+	AD=D+A
+	@64 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	AD=A+1 // D holds addr
+	@128 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	// row 19
+	D=A // D holds previous addr
+	@31
+	AD=D+A
+	@256 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	AD=A+1 // D holds addr
+	@64 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	// row 20
+	D=A // D holds previous addr
+	@31
+	AD=D+A
+	@15360 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	AD=A+1 // D holds addr
+	@52 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	// row 21
+	D=A // D holds previous addr
+	@31
+	AD=D+A
+	@16384 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=A-D // RAM[addr]=-val
+	AD=A+1 // D holds addr
+	@3 // A holds val
+	D=D+A // D = addr + val
+	A=D-A // A=addr + val - val = addr
+	M=D-A // RAM[addr] = val
+	// return
+	@R13
+	A=M
+
+
+
+(borrar_bitmap)
+   @SCREEN
+   D=A
+   @8192    ; Tamaño de la pantalla en RAM
+   D=D+A    ; Dirección final de la pantalla
+   
+   (borrar_loop)
+   @SCREEN
+   A=M
+   M=0      ; Borra el píxel actual
+   
+   @SCREEN
+   M=M+1    ; Avanza a la siguiente posición
+   D=D-1
+   @borrar_loop
+   D;JGT    ; Repite hasta borrar todo
+   
+   @INICIO
+   0;JMP
+``` 
