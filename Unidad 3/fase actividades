@@ -360,3 +360,152 @@ Si se elimina el puntero del vector sin hacer delete, el objeto sigue en memoria
 Si se hace delete pero no pop_back, el vector tendría punteros colgantes (dangling pointers).
 
 RETO
+Codigo fuente:
+
+### .h
+```cpp
+#pragma once
+
+#include "ofMain.h"
+
+class ofApp : public ofBaseApp {
+public:
+    void setup();
+    void update();
+    void draw();
+
+    void keyPressed(int key);
+    void mousePressed(int x, int y, int button);
+
+    // Funciones auxiliares
+    glm::vec3 screenToWorldRay(int x, int y);
+    bool rayIntersectsSphere(const glm::vec3& rayOrigin, const glm::vec3& rayDir,
+        const glm::vec3& sphereCenter, float radius, glm::vec3& intersectionPoint);
+
+    // Cámara
+    ofEasyCam cam;
+
+    // Esferas
+    vector<glm::vec3> esferaPosiciones;
+    int xStep = 50;
+    int yStep = 50;
+    float distDiv = 100.0f;
+    float amplitud = 100.0f;
+    float radioEsfera = 10.0f;
+
+    // Esfera seleccionada
+    bool esferaSeleccionada = false;
+    glm::vec3 esferaSeleccionadaPos;
+    glm::vec3 puntoInterseccion;
+};
+```
+### cpp
+
+```cpp
+#include "ofApp.h"
+
+void ofApp::setup() {
+    ofBackground(10);
+    cam.setDistance(600);
+
+    esferaPosiciones.clear();
+    for (int x = -ofGetWidth() / 2; x < ofGetWidth() / 2; x += xStep) {
+        for (int y = -ofGetHeight() / 2; y < ofGetHeight() / 2; y += yStep) {
+            float distancia = ofDist(x, y, 0, 0);
+            float z = cos(distancia / distDiv) * amplitud;
+            esferaPosiciones.push_back(glm::vec3(x, y, z));
+        }
+    }
+}
+
+void ofApp::update() {}
+
+void ofApp::draw() {
+    cam.begin();
+
+    for (auto& pos : esferaPosiciones) {
+        ofDrawSphere(pos, radioEsfera);
+    }
+
+    if (esferaSeleccionada) {
+        ofSetColor(ofColor::yellow);
+        ofDrawSphere(esferaSeleccionadaPos, radioEsfera * 1.5);
+        ofSetColor(255);
+    }
+
+    cam.end();
+
+    if (esferaSeleccionada) {
+        ofDrawBitmapStringHighlight("Esfera seleccionada en: \n" +
+            ofToString(esferaSeleccionadaPos, 2) +
+            "\nIntersección en: \n" + ofToString(puntoInterseccion, 2), 20, 20);
+    }
+
+    ofDrawBitmapStringHighlight("Controles:\nW/S: Aumentar/disminuir amplitud\nA/D: Aumentar/disminuir separación\nR: Reiniciar escena",
+        20, ofGetHeight() - 100);
+}
+
+void ofApp::mousePressed(int x, int y, int button) {
+    glm::vec3 rayOrigin = cam.getPosition();
+    glm::vec3 mouseRay = screenToWorldRay(x, y);
+
+    esferaSeleccionada = false;
+
+    for (auto& pos : esferaPosiciones) {
+        glm::vec3 interseccion;
+        if (rayIntersectsSphere(rayOrigin, mouseRay, pos, radioEsfera, interseccion)) {
+            esferaSeleccionada = true;
+            esferaSeleccionadaPos = pos;
+            puntoInterseccion = interseccion;
+            break;
+        }
+    }
+}
+
+void ofApp::keyPressed(int key) {
+    if (key == 'w') amplitud += 10;
+    if (key == 's') amplitud -= 10;
+    if (key == 'a') xStep = yStep = std::max(10, xStep - 5);
+    if (key == 'd') xStep = yStep = std::min(300, xStep + 5);
+    if (key == 'r') setup();  // Reiniciar
+}
+
+// Convierte coordenadas de pantalla a dirección de rayo en el mundo 3D
+glm::vec3 ofApp::screenToWorldRay(int x, int y) {
+    glm::vec3 rayStart = cam.screenToWorld(glm::vec3(x, y, 0));
+    glm::vec3 rayEnd = cam.screenToWorld(glm::vec3(x, y, 1));
+    return glm::normalize(rayEnd - rayStart);
+}
+
+// Intersección rayo-esfera
+bool ofApp::rayIntersectsSphere(const glm::vec3& rayOrigin, const glm::vec3& rayDir,
+    const glm::vec3& sphereCenter, float radius, glm::vec3& intersectionPoint) {
+    glm::vec3 oc = rayOrigin - sphereCenter;
+    float a = glm::dot(rayDir, rayDir);
+    float b = 2.0f * glm::dot(oc, rayDir);
+    float c = glm::dot(oc, oc) - radius * radius;
+    float discriminant = b * b - 4 * a * c;
+
+    if (discriminant >= 0) {
+        float t = (-b - sqrt(discriminant)) / (2.0f * a);
+        intersectionPoint = rayOrigin + t * rayDir;
+        return true;
+    }
+
+    return false;
+}
+```
+
+## 🧠 Tabla de Uso de Memoria en la Aplicación
+
+| **Dato**                                            | **Tipo de Memoria**    | **Descripción**                                                                 |
+|-----------------------------------------------------|-------------------------|---------------------------------------------------------------------------------|
+| `std::vector<glm::vec3> esferaPosiciones`           | Heap (dinámica)         | Almacenamiento dinámico de las posiciones 3D de las esferas. El vector gestiona automáticamente su memoria. |
+| `glm::vec3` (ej. `esferaSeleccionadaPos`, `puntoInterseccion`) | Stack (automática)     | Variables locales/miembro que almacenan vectores 3D, se asignan automáticamente en la pila. |
+| `cam` (`ofEasyCam`)                                 | Stack (automática)      | Se crea una instancia local de cámara. Su memoria se maneja automáticamente al ser un objeto miembro. |
+| `float` (`amplitud`, `radioEsfera`, etc.)           | Stack (automática)      | Variables numéricas simples para controlar el comportamiento de la escena. |
+| Strings temporales (`ofToString(...)`)              | Heap (temporal)         | Las cadenas generadas en tiempo real para mostrar en pantalla son almacenadas temporalmente por el sistema. |
+
+# VIDEO RETO
+
+https://youtu.be/Jw0P11eckvM
