@@ -1,0 +1,46 @@
+## ¿Qué es openFrameworks?
+
+openFrameworks es un conjunto de herramientas (framework) de código abierto desarrollado en C++, orientado al desarrollo de aplicaciones creativas, visuales e interactivas. Su objetivo principal es facilitar el uso de múltiples bibliotecas de bajo nivel para trabajar con gráficos, audio, video, entrada de dispositivos y otras funciones multimedia, sin necesidad de lidiar directamente con la complejidad que normalmente implica su implementación individual.
+
+Este framework fue diseñado especialmente para artistas, diseñadores, investigadores, desarrolladores creativos y cualquier persona interesada en experimentar con la programación en contextos visuales o performáticos. A diferencia de motores comerciales o entornos más gráficos, openFrameworks ofrece un control detallado sobre los procesos, permitiendo resultados muy personalizados y optimizados.
+
+## ¿Cómo funciona openFrameworks?
+
+La estructura de openFrameworks se basa en abstraer múltiples bibliotecas de propósito general y convertirlas en una interfaz más simple y coherente, todo esto dentro de un entorno basado en C++. Al trabajar con openFrameworks, el usuario puede acceder fácilmente a funcionalidades que normalmente requerirían muchas líneas de código complejo, y en su lugar utilizar métodos claros y directos.
+
+Por debajo, openFrameworks utiliza varias bibliotecas reconocidas:
+
+- **OpenGL** para renderizado gráfico en 2D y 3D.
+- **FreeType** para cargar y dibujar fuentes tipográficas.
+- **OpenCV** para visión por computadora.
+- **RtAudio** y **OpenAL** para reproducción y entrada de audio.
+- **GLFW** para manejo de ventanas y eventos de entrada (teclado, mouse).
+- **Poco** para utilidades como manejo de archivos, red y tiempo.
+
+openFrameworks actúa como un “puente” entre el programador y estas bibliotecas, creando una interfaz más intuitiva que respeta la lógica de programación orientada a objetos en C++. Toda la estructura del proyecto gira en torno a una clase principal (`ofApp`), que contiene métodos estándar como:
+
+- `setup()` → donde se inicializa la aplicación (se ejecuta una sola vez al principio).
+- `update()` → donde se actualiza la lógica o los datos (se ejecuta una vez por frame).
+- `draw()` → donde se dibuja en pantalla (también una vez por frame).
+
+Este ciclo constante de actualización y dibujo permite que la aplicación responda en tiempo real a entrada del usuario, sensores o cualquier otra fuente de datos dinámica.
+
+Además de esto, el framework soporta eventos como `keyPressed`, `mouseMoved`, `mouseDragged`, `windowResized`, etc., lo que permite manejar fácilmente la interacción con el usuario.
+
+## ¿Qué tipo de aplicaciones se pueden hacer con openFrameworks?
+
+Gracias a su flexibilidad y bajo nivel de acceso al sistema, openFrameworks es ideal para:
+
+- Visualizaciones de datos en tiempo real.
+- Instalaciones interactivas para museos o eventos.
+- Proyectos de arte generativo.
+- Prototipos de software experimental.
+- Interfaces que usen cámaras, sensores o entrada física.
+- Experiencias audiovisuales sincronizadas con sonido o movimiento.
+- Aplicaciones móviles con interacción táctil.
+
+openFrameworks no impone límites creativos ni estructuras cerradas. El desarrollador tiene libertad total para definir cómo se comporta cada parte del programa, y puede combinar el framework con otras librerías externas si lo necesita.
+
+## En resumen
+
+openFrameworks es una herramienta potente, pensada para quienes quieren construir proyectos creativos desde el código, con control total sobre gráficos, sonido, video e interacción, sin sacrificar el rendimiento ni depender de entornos cerrados. Funciona como una base modular y flexible que simplifica el trabajo con múltiples tecnologías al integrarlas en una estructura unificada y coherente dentro del lenguaje C++.

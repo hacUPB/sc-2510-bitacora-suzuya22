@@ -2,6 +2,8 @@
 La arquitectura Hack cuenta con un concepto de INPUT/OUTPUT, que corresponde a entrada y salida en español. Este concepto se refiere a dos dispositivos externos que pueden interactuar con la computadora Hack: el teclado (input) y la pantalla (output). Ambos dispositivos están mapeados a direcciones específicas dentro de la memoria RAM, lo que permite que se acceda a ellos de la misma manera que a cualquier otra dirección de memoria normal.
 
 ### ¿Cómo se implementa en la plataforma Hack?
+En la plataforma Hack (que incluye la arquitectura de la computadora Hack de The Elements of Computing Systems), la entrada y salida (I/O) se maneja a través de la memoria. No hay instrucciones específicas para I/O, 
+sino que se accede a direcciones de memoria especiales para interactuar con la pantalla, el teclado y otros periféricos.
 
 #### Pantalla en la arquitectura Hack
 La pantalla en Hack es un dispositivo de salida que representa una cuadrícula de celdas organizadas en filas y columnas. Cada celda corresponde a un pixel en la pantalla y su estado (encendido o apagado) está determinado por el valor binario almacenado en la RAM. 
@@ -32,7 +34,7 @@ Cada cambio en la memoria de la pantalla se traduce en un cambio en los pixeles 
 
 ``` asm
 // Dirección de memoria del teclado
-@KBD
+@24576   // Dirección del teclado en NAND-Tetris
 D=M      // Leer el valor del teclado en D
 
 // Si no se presiona ninguna tecla, limpiar la pantalla
@@ -40,7 +42,7 @@ D=M      // Leer el valor del teclado en D
 D;JEQ    // Si D == 0, ir a SIN_TECLA
 
 // Si hay una tecla presionada, dibujar un cuadrado
-@PANTALLA
+@16384   // Dirección inicial de la pantalla
 D=A
 @direccion
 M=D      // Guardar la dirección de inicio de la pantalla en direccion
@@ -66,7 +68,7 @@ D;JGT    // Repetir hasta llenar la pantalla
 0;JMP    // Saltar al final
 
 (SIN_TECLA)
-@PANTALLA
+@16384   // Dirección inicial de la pantalla
 D=A
 @direccion
 M=D      // Guardar dirección de inicio de la pantalla en direccion
@@ -94,4 +96,3 @@ D;JGT    // Repetir hasta limpiar la pantalla
 (FIN)
 @FIN
 0;JMP    // Bucle infinito
-```

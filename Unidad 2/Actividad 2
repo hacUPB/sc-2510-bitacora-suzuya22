@@ -13,7 +13,7 @@
    D =  M - D
    @bitmap
    D;JEQ       ; 7: Si D = 0, salta a la dirección (bitmabp) (si se presiona una tecla, salta)
-@INICIO
+@INICIOaed
 0;JMP
     (bitmap)
 	D=A
