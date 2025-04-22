@@ -1,0 +1,470 @@
+# Sesion 1: La naturaleza de los objetos en C++
+
+## Introduccion a los objetos
+
+Concepto: un objeto es una instancia de una clase que combina datos (atributos) y comportamiento (métodos).
+
+Considera el siguiente caso de estudio:
+
+```cpp
+class Particle {
+public:
+    float x, y;
+    void move(float dx, float dy) {
+        x += dx;
+        y += dy;
+    }
+};
+```
+
+### ¿Qué representa la clase Particle?  
+La clase **Particle** representa a un tipo de dato, que almacena un valor de x, y, y tiene un metodo de mover, desde el cual se hace que a x se le sume el largo desde x del tamaño de la particula.
+### ¿Cómo interactúan sus atributos y métodos?
+En esta clase, primero se generan **atributos**, desde los cuales se crea y cuyos valores se almacenan en el objeto. Estos valores se utilizan en el unico **metodo** que tiene esta clase, desde  el cual se cambian sus valores.
+### Prompt para ChatGPT: explícame en detalle qué es un objeto en C++ y cómo se relaciona con una clase. Usa el ejemplo de una clase Particle con atributos x y y y un método move.
+En resumidas cuentas, la respuesta que dio la IA fue: Una clase es la forma en la que se establece un nuevo tipo de dato, que tiene distintos **atributos** y **metodos**. De la misma forma en que se declaran otros tipos de variable como `float` o `string`, al momento de crear un objeto se tiene primero que declarar que es el tipo de objeto que la clase especifica, y al momento de crearla, se declaran tambien los distintos valores que fueron declarados mediante sus **atributos**. Estos nuevos objetos tienen distintos **metodos** añadidos, es decir, pueden llamar a un **void** mediante una unica linea de codigo, y esta sera igual para cada objeto creado dentro de esta clase.
+
+#### Ej:
+
+```cpp
+#include <iostream>
+using namespace std;
+
+// Definición de la clase Particle (el "plano")
+class Particle {
+public:
+    // Atributos (variables miembro)
+    float x;
+    float y;
+    
+    // Método para mover la partícula
+    void move(float dx, float dy) {
+        x += dx;
+        y += dy;
+    }
+    
+    // Método para mostrar la posición
+    void showPosition() {
+        cout << "Posición: (" << x << ", " << y << ")" << endl;
+    }
+};
+
+int main() {
+    // Creación de objetos (instancias de la clase Particle)
+    Particle particle1;  // Objeto 1
+    Particle particle2;  // Objeto 2
+    
+    // Inicialización de los objetos
+    particle1.x = 0.0;
+    particle1.y = 0.0;
+    
+    particle2.x = 5.0;
+    particle2.y = 3.0;
+    
+    // Usando métodos de los objetos
+    cout << "Antes de mover:" << endl;
+    particle1.showPosition();
+    particle2.showPosition();
+    
+    particle1.move(2.5, 1.5);
+    particle2.move(-1.0, 0.5);
+    
+    cout << "\nDespués de mover:" << endl;
+    particle1.showPosition();
+    particle2.showPosition();
+    
+    return 0;
+}
+```
+
+## Explorando la memoria
+
+Objetivo: entender cómo se almacenan los objetos en memoria.
+
+Considera los siguientes pasos:
+
+1. Crear instancias:
+
+    ```cpp
+    Particle p1;
+    Particle p2;
+    ```
+
+2. Explorar la memoria usando punteros:
+
+    ```cpp
+    std::cout << "Dirección de p1: " << &p1 << std::endl;
+    std::cout << "Dirección de p2: " << &p2 << std::endl;
+    ```
+
+3. Determinar el tamaño del objeto:
+
+    ```cpp
+    std::cout << "Tamaño de Particle: " << sizeof(Particle) << " bytes" << std::endl;
+    ```
+
+4. Imprimir direcciones de atributos:
+
+    ```cpp
+    std::cout << "Dirección de p1.x: " << &(p1.x) << std::endl;
+    std::cout << "Dirección de p1.y: " << &(p1.y) << std::endl;
+    ```
+
+Reflexión Guiada:
+
+### ¿Los atributos están almacenados de forma contigua?
+
+Si, la totalidad de almacenamiento de cada objeto `Particle` es de 8 bytes, siendo 4 dedicados a `x` y 4 dedicados a `y`, por lo que su almacenamiento se da de forma contigua, es decir, sin `padding` o espacios de almacenamiento en RAM de intermedio.
+### ¿Qué indica el tamaño del objeto sobre su estructura interna?
+Que los metodos del objeto no ocupan espacio de almacenamiento en RAM. 
+### Prompt para ChatGPT: ¿Cómo se almacenan los objetos en memoria en C++? Si tengo dos instancias de Particle, ¿Cómo se relacionan sus direcciones de memoria? ¿Los atributos están contiguos?
+En resumidas cuentas, estas fueron las conclusiones de la IA:
+
+- Los atributos estan contiguos, es decir, `y` sigue inmediatamente despues de `x`.
+- La direccion de `&p1` es igual a la de su primer atributo, `&p1.x`.
+- Cada objeto tiene su propio espacio de RAM dedicado, es decir, las casillas de RAM dedicadas a `p1` no se sobreponen con las de `p2`. Esto a su vez significa que cada objeto tiene sus valores de `x` y `y` independientes.
+- Los objetos no necesariamente se almacenaran de forma **contigua**, es decir, depende del tipo de memoria que tengan dedicados. Por ejemplo, de estar almacenados en el **stack**, podrian tener otras variables requeridas por el programa de por medio, y en el caso de ser almacenados en el **heap** dependeria enteramente del **asignador a memoria dinamica**. 
+
+## Análisis de diferencias
+
+Objetivo: comparar cómo diferentes clases afectan el uso de memoria.
+
+Considera los siguientes pasos:
+
+1. Crear clases con diferentes atributos y métodos:
+
+    ```cpp
+    class Simple {
+    public:
+        int a;
+    };
+
+    class Complex {
+    public:
+        int a, b, c;
+        void method1() {}
+        void method2() {}
+    };
+    ```
+
+2. Compara los tamaños:
+
+    ```cpp
+    std::cout << "Tamaño de Simple: " << sizeof(Simple) << " bytes" << std::endl;
+    std::cout << "Tamaño de Complex: " << sizeof(Complex) << " bytes" << std::endl;
+    ```
+
+3. Agregar datos estáticos y dinámicos:
+
+    ```cpp
+    class StaticData {
+    public:
+        static int s;
+        int a;
+    };
+
+    int StaticData::s = 0;
+
+    class DynamicData {
+    public:
+        int* ptr;
+        DynamicData() {
+            ptr = new int[10];
+        }
+        ~DynamicData() {
+            delete[] ptr;
+        }
+    };
+    ```
+
+### ¿Cómo afectan los datos estáticos al tamaño de la instancia?
+Al momento de crear un objeto y marcarlo como `static`, su valor sera el mismo para **todos** los objetos creados **bajo esa clase**. Debido a esto, el valor asignado a este atributo no sera almacenado en consonancia con el resto del objeto, sino que sera almacenado en la memoria **global**. Debido a esto, los valores y variables marcados como `static` no contribuiran a el tamaño del objeto.
+### ¿Qué diferencias hay entre datos estáticos y dinámicos en términos de memoria?
+Cuando un objeto es almacenado en la **memoria global** este se inicializa una sola vez, es eliminado automaticamente tan pronto el programa se finaliza. Estos tienen distintos comportamientos dependiendo de en donde sean creados: 
+- En caso de crearse en el programa principal, estas se mantienen y se permite acceder a ellas desde su totalidad.
+- En caso de crearse al interior de una clase, es decir, como uno de sus atributos, este se mantendra a traves de todos los objetos pertenecientes a esa clase.
+- En caso de crearse al interior de una funcion, su valor podra llamarse en cualquier otra funcion, pero solamente se podra editar dentro de la misma funcion en la que fue creado.
+
+Cuando un objeto es almacenado en la memoria **dinamica** (heap) estos solamente pueden ser editados mediante el uso de **punteros**, generalmente requieren de un metodo adicional que permita eliminarlas (de lo contrario, se puede dar una fuga de memoria), y su gestion en su totalidad queda en manos del programador, ya que estas permanecen incluso despues de que el programa fue finalizado.
+### Prompt para ChatGPT: explícame cómo el uso de variables estáticas y dinámicas en una clase afecta el tamaño de sus instancias. ¿Las variables estáticas ocupan espacio en cada objeto?
+
+---
+
+## **Tabla Comparativa**
+| **Aspecto**            | **Datos Estáticos (`static`)**                          | **Datos Dinámicos (`new`/`malloc`)**               |
+|------------------------|-------------------------------------------------------|---------------------------------------------------|
+| **Almacenamiento**     | Memoria estática (segmento de datos global)           | Heap (memoria dinámica)                           |
+| **Vida útil**          | Toda la ejecución del programa                        | Hasta que se libere con `delete`/`free`           |
+| **Ámbito**             | Global o compartido entre instancias (si es `static` en una clase) | Limitado al puntero/referencia que los apunta |
+| **Inicialización**     | Automática (antes de `main()`)                        | Manual (en tiempo de ejecución)                   |
+| **Gestión de memoria** | Automática (liberada al terminar el programa)         | Manual (responsabilidad del programador)          |
+| **Rendimiento**        | Acceso rápido (dirección fija en memoria)             | Acceso más lento (indirección por puntero)        |
+| **Uso típico**         | Contadores globales, configuraciones compartidas      | Estructuras de datos dinámicas, objetos grandes   |
+
+---
+
+## Reflexión
+
+Documenta en tu bitácora de aprendizaje:
+
+### ¿Qué es un objeto desde la perspectiva de la memoria?
+Un objeto es un rango de espacios en la memoria RAM que almacenan **atributos**.
+### ¿Cómo influyen los atributos y métodos en el tamaño y estructura del objeto?
+Los **atributos** son ubicados en los espacios de memoria RAM **dedicados al objeto**. Los **metodos** **no son almacenados en la memoria RAM dedicada al objeto**.
+### Conclusión: resumir los hallazgos y cómo esto impacta el diseño de clases.
+Al momento de crear un objeto, si se requiere que este este almacenado en un **array** que exista fuera de la funcion mediante la que fue creada, es ideal almacenarlo en la memoria **heap**, sin embargo, no se debe olvidar crear un metodo que lo elimine dentro del mismo programa, con el fin de que esta no se quede ocupando espacio en la memoria del equipo. Al momento de crear valores que sean consistentes a traves de todo el programa, y que se busque que no puedan editarse mediante cualquier funcion, es ideal almacenarlo en la memoria **global**.
+
+###Almacenamiento en memoria de datos y métodos
+
+
+1. Estructura en memoria de una clase
+Atributos
+Los atributos (variables miembro) de una clase pueden almacenarse en diferentes zonas de la memoria dependiendo de cómo se declare la instancia del objeto:
+
+Si el objeto se declara como variable local, los atributos se almacenan en la pila (stack).
+
+Si se utiliza new para crear el objeto dinámicamente, los atributos van al montículo (heap).
+
+Si el atributo está declarado como static, se almacena en la zona de memoria global (data segment), compartido por todas las instancias.
+
+Métodos
+El código de los métodos, sean estáticos o no, se almacena en la sección de texto (text/code) del programa, donde residen todas las funciones compiladas.
+
+Métodos virtuales y VTable
+Los métodos virtuales utilizan un mecanismo especial llamado vtable (virtual table), que es básicamente un arreglo de punteros a funciones virtuales.
+Cada clase que tiene al menos un método virtual tiene una única vtable, y cada objeto de dicha clase contiene un puntero oculto a esta tabla.
+
+Este puntero ocupa 8 bytes adicionales por objeto (en arquitecturas de 64 bits).
+
+La vtable se ubica generalmente en una zona de memoria estática.
+
+Este sistema permite el polimorfismo en tiempo de ejecución, es decir, que un mismo método puede comportarse de manera diferente dependiendo de la clase derivada del objeto que lo invoque.
+
+2. Métodos virtuales en acción
+Veamos cómo los métodos virtuales funcionan en C++:
+
+cpp
+
+class Base {
+public:
+    virtual void display() {
+        std::cout << "Base display" << std::endl;
+    }
+};
+
+class Derived : public Base {
+public:
+    void display() override {
+        std::cout << "Derived display" << std::endl;
+    }
+};
+Aquí, display() es un método virtual. Cuando se crea un objeto Derived, se asegura que la llamada a display() invoque la versión adecuada.
+
+Inspección de la VTable en memoria
+cpp
+
+Base b;
+Derived d;
+std::cout << "Vtable de Base: " << *(void**)&b << std::endl;
+std::cout << "Vtable de Derived: " << *(void**)&d << std::endl;
+Esto imprime la dirección de la tabla virtual asociada con cada objeto. En la práctica, puedes usar el depurador de Visual Studio (Debug > Windows > Memory) para explorar estas direcciones en tiempo real.
+
+Impacto en el tamaño del objeto
+Cada objeto que pertenece a una clase con métodos virtuales ocupará 8 bytes extra en memoria para almacenar el puntero a la vtable.
+
+Relación con el polimorfismo
+La vtable permite que cada clase derivada implemente su propia versión de un método definido originalmente en la clase base. Así, el comportamiento cambia dinámicamente en función del tipo real del objeto en tiempo de ejecución.
+
+cpp
+
+class Animal {
+public:
+    virtual void hablar() { std::cout << "Sonido genérico" << std::endl; }
+    virtual ~Animal() {}
+};
+
+class Perro : public Animal {
+public:
+    void hablar() override { std::cout << "¡Guau!" << std::endl; }
+};
+
+Animal* a = new Perro();
+a->hablar();  // Imprime "¡Guau!" gracias a la vtable
+delete a;     // Llama al destructor correcto (también virtual)
+3. Punteros y referencias en métodos
+Punteros a funciones
+Puedes tener punteros que almacenan direcciones de funciones. Esto se usa para callbacks o estructuras de comportamiento dinámico.
+
+cpp
+
+class FunctionPointerExample {
+public:
+    void (*funcPtr)();
+
+    static void staticFunction() {
+        std::cout << "Static function called" << std::endl;
+    }
+
+    void assignFunction() {
+        funcPtr = staticFunction;
+    }
+};
+Impacto en memoria
+Los punteros a funciones ocupan 8 bytes (en sistemas de 64 bits), al igual que otros punteros.
+
+Se almacenan como cualquier otro puntero, apuntando a una dirección de código en la memoria.
+
+Relación entre punteros y vtables
+La vtable es en sí misma un arreglo de punteros a funciones virtuales, por lo que hay una conexión directa entre los conceptos. Sin embargo, los punteros a funciones pueden usarse independientemente del polimorfismo y no requieren una estructura de clases.
+
+4. Comparación: punteros a funciones vs punteros a métodos
+
+Aspecto	Punteros a Funciones	Punteros a Métodos
+¿A qué apuntan?	A funciones globales o estáticas	A métodos no estáticos de clases
+Necesitan objeto para invocar	No	Sí (requieren contexto this)
+Sintaxis	void (*ptr)();	void (Clase::*ptr)();
+Invocación	ptr();	(objeto.*ptr)(); o (ptrObj->*ptr)();
+Compatibilidad con lambdas	Directa con std::function	Necesita std::bind o lambda
+Rendimiento	Ligeramente más rápido	Más lento por manejar el contexto this
+Usos comunes	Callbacks, APIs de C	Programación orientada a objetos
+5. Consideraciones sobre rendimiento
+Las llamadas a métodos virtuales no pueden ser inline, lo cual impide algunas optimizaciones del compilador.
+
+La CPU realiza un salto indirecto (lookup en la vtable) al invocar un método virtual, lo que aumenta ligeramente el tiempo de ejecución.
+
+Sin embargo, esta penalización es mínima en la mayoría de los programas, y se justifica por la flexibilidad del polimorfismo dinámico.
+
+Conclusión
+El uso de métodos virtuales en C++ implica una estructura adicional en memoria (vtable), la cual permite el polimorfismo dinámico.
+
+Los atributos y métodos se almacenan en distintas secciones de la memoria según su naturaleza y cómo se instancien.
+
+Los punteros a funciones y punteros a métodos permiten una programación más flexible, aunque con un leve impacto en el rendimiento.
+
+
+---
+### 4. Reflexión individual:
+- ¿Dónde residen los datos y métodos de una clase en la memoria?  
+Los datos de una clase residen en la memoria **stack** o **dinamica** dependiendo de donde se declare que deben estar, a no ser que sean declaradas como `static`, en cuyo caso, se almacenan en la memoria global. Los metodos de una clase, generalmente, se almacenan en la memoria **global**, a no ser que sean metodos **virtuales** en cuyo caso, cada objeto tendra un **puntero** añadido, y la `vtable` que se almacena en memoria **global** almacenara **punteros a funcion** por cada clase creada.
+- ¿Cómo interactúan las diferentes partes en tiempo de ejecución?  
+Las `vtables` y en consecuente, los metodos **virtuales**, y en consecuencia, los **punteros a funcion** incrementan la memoria que el programa debe utilizar, ya que agregan procesos adicionales que **no se pueden optimizar**, incrementando asi el tiempo de ejecucion requerido para los programas.
+- Conclusión: cómo esta comprensión afecta el diseño de sistemas.  
+Entender estos conceptos permite la creacion de **clases derivadas**, sin embargo, tambien deja como pregunta los casos en los que el peso que dejan estas funciones vale la pena por las oportunidades que dan estas a hacer de un programa algo mas eficiente de escribir.
+
+Encapsulamiento, Herencia y Polimorfismo en C++
+Encapsulamiento: Control de Acceso a los Datos
+En C++, el encapsulamiento se refiere a la práctica de ocultar los detalles internos de una clase y exponer solo lo necesario a través de interfaces públicas. Esto se consigue utilizando modificadores de acceso: private, protected, y public.
+
+Private: Los miembros son accesibles solo dentro de la clase.
+
+Protected: Los miembros son accesibles dentro de la clase y sus clases derivadas.
+
+Public: Los miembros son accesibles desde cualquier parte del programa.
+
+Ejemplo básico:
+
+cpp
+
+class MyClass {
+private:
+    int secret;
+public:
+    MyClass(int val) : secret(val) {}
+    void display() { std::cout << secret; }
+};
+
+int main() {
+    MyClass obj(10);
+    // obj.secret = 5;  // Error: 'secret' es privado
+    obj.display();  // Muestra 10
+    return 0;
+}
+El encapsulamiento no impide el almacenamiento de los datos privados en la memoria, sino que restringe el acceso directo a ellos desde fuera de la clase, buscando seguridad y control.
+
+Violando el Encapsulamiento
+Aunque los modificadores de acceso buscan proteger los datos, es posible violarlos mediante técnicas avanzadas como el uso de punteros o reinterpret_cast. Esto permite acceder directamente a las variables privadas, aunque no se recomienda debido a los riesgos de seguridad.
+
+cpp
+
+int main() {
+    MyClass obj(42);
+    int* ptr = reinterpret_cast<int*>(&obj);
+    std::cout << *ptr;  // Accede a 'secret' de forma no segura
+    return 0;
+}
+Esta técnica demuestra cómo, aunque el compilador restringe el acceso a los miembros privados, es posible saltarse esa protección usando trucos de bajo nivel. Sin embargo, esta práctica puede corromper la memoria y hacer que el programa sea difícil de mantener.
+
+Herencia y Layout de Memoria
+La herencia en C++ permite que una clase derivada herede atributos y métodos de una clase base. Esto también influye en la organización de la memoria.
+
+Cuando una clase derivada es instanciada, los miembros de la clase base se almacenan primero en memoria, seguidos de los miembros de la clase derivada.
+
+cpp
+
+class Base {
+public:
+    int baseVar;
+};
+
+class Derived : public Base {
+public:
+    int derivedVar;
+};
+
+int main() {
+    Derived d;
+    std::cout << "Dirección de d: " << &d << std::endl;
+    std::cout << "Dirección de d.baseVar: " << &(d.baseVar) << std::endl;
+    std::cout << "Dirección de d.derivedVar: " << &(d.derivedVar) << std::endl;
+    return 0;
+}
+La memoria de los objetos derivados se organiza de la siguiente manera:
+
+Clase Base: Los atributos de la clase base se almacenan primero.
+
+Clase Derivada: Los atributos de la clase derivada se almacenan después.
+
+Esto asegura que las clases derivadas tengan acceso a los miembros de las clases base sin duplicar datos.
+
+Polimorfismo: Vtables y Métodos Virtuales
+El polimorfismo permite que una misma interfaz sea utilizada para diferentes tipos de objetos. En C++, se implementa mediante métodos virtuales y el uso de vtables.
+
+Un método virtual es un método declarado en una clase base que puede ser sobrescrito en clases derivadas. El mecanismo de las vtables se utiliza para resolver cuál versión del método debe ejecutarse en tiempo de ejecución.
+
+cpp
+
+class Animal {
+public:
+    virtual void makeSound() { std::cout << "Some generic sound"; }
+};
+
+class Dog : public Animal {
+public:
+    void makeSound() override { std::cout << "Bark"; }
+};
+
+class Cat : public Animal {
+public:
+    void makeSound() override { std::cout << "Meow"; }
+};
+
+int main() {
+    Animal* animals[] = { new Dog(), new Cat() };
+    for (auto* animal : animals) {
+        animal->makeSound();  // Llamada dinámica a makeSound()
+    }
+    return 0;
+}
+Vtable: Una tabla de punteros a las funciones virtuales. En tiempo de ejecución, el programa usa el vptr (puntero a la vtable) para localizar la versión adecuada del método virtual que debe ejecutarse.
+
+Proceso:
+
+El puntero animal apunta a un objeto Dog o Cat.
+
+Se usa el vptr para acceder a la vtable de la clase real.
+
+Se llama al método correspondiente según la clase real del objeto (Dog::makeSound() o Cat::makeSound()).
+
+Impacto en el Rendimiento
+El uso de métodos virtuales introduce una pequeña sobrecarga en el rendimiento debido a la búsqueda en la vtable. Sin embargo, la ventaja es que facilita la programación más flexible y mantenible.
+
