@@ -1,0 +1,511 @@
+# Seguimiento del mouse con openFrameworks
+
+Este repositorio contiene un ejemplo básico de una aplicación hecha con **openFrameworks**, donde se dibuja un círculo que sigue al puntero del mouse.
+
+## 📄 Descripción
+
+El programa utiliza las funciones básicas de `ofApp` para crear una ventana con fondo negro, y dibujar un círculo blanco que se actualiza constantemente en la posición actual del mouse.
+
+### Características principales:
+
+- Fondo negro.
+- Círculo blanco que sigue la posición del mouse.
+- Redibujo constante en cada `frame`.
+
+## 🧠 ¿Cómo funciona?
+
+A continuación se explica cada parte del código:
+
+```cpp
+#include "ofApp.h"
+
+//--------------------------------------------------------------
+void ofApp::setup(){
+    ofBackground(0); // Se establece el color de fondo en negro
+}
+
+//--------------------------------------------------------------
+void ofApp::update(){
+    // No se realiza ninguna actualización de lógica aquí
+}
+
+//--------------------------------------------------------------
+void ofApp::draw(){
+    ofSetColor(255); // Se establece el color blanco
+    ofDrawCircle(ofGetMouseX(), ofGetMouseY(), 20); // Dibuja un círculo en la posición actual del mouse
+}
+```
+
+# 🎨 Actividad 2 - Partículas Interactivas con openFrameworks
+
+Esta actividad es una introducción práctica al ciclo básico de una aplicación hecha en **openFrameworks**. A través de este ejercicio, se implementa una pequeña animación interactiva que responde al movimiento y clics del mouse, generando partículas visuales en la pantalla.
+
+---
+
+## 📋 Contexto del ejercicio
+
+La aplicación dibuja partículas (círculos) en las posiciones donde se mueve el mouse. Estas partículas se almacenan en un vector y se actualizan dinámicamente, de modo que se eliminan las más antiguas para evitar que se acumulen infinitamente. Además, al hacer clic, el color de todas las partículas cambia aleatoriamente.
+
+---
+
+## ❓ Análisis del código
+
+### 🔹 ¿Qué fue lo que incluimos en el archivo `.h`?
+
+Se incluyeron las funciones principales del ciclo de vida (`setup`, `update`, `draw`) y dos funciones que responden a eventos del mouse (`mouseMoved`, `mousePressed`). También se declararon dos variables privadas:
+
+- `particles`: un vector de `ofVec2f`, que almacena las posiciones del mouse para dibujar las partículas.
+- `particleColor`: una variable `ofColor` que define el color actual que tendrán las partículas.
+
+---
+
+## ⚙️ Explicación general de las funciones
+
+### `setup()`
+
+**En openFrameworks**:  
+Se ejecuta una sola vez al inicio de la aplicación. Sirve para inicializar variables, configurar el fondo, cargar recursos, etc.
+
+**En este ejercicio**:  
+Se usa para establecer el fondo en color negro (`ofBackground(0)`) y definir el color blanco como valor inicial para las partículas.
+
+---
+
+### `update()`
+
+**En openFrameworks**:  
+Se llama una vez por frame. Sirve para actualizar la lógica del programa, como animaciones, cálculos, físicas, etc.
+
+**En este ejercicio**:  
+No contiene lógica específica, pero está presente por convención, listo para posibles mejoras futuras.
+
+---
+
+### `draw()`
+
+**En openFrameworks**:  
+Dibuja los elementos gráficos en pantalla. Todo lo que se quiera visualizar (formas, imágenes, texto, etc.) se define aquí.
+
+**En este ejercicio**:  
+Se recorre el vector `particles` y se dibuja un círculo de radio 50 en cada posición usando el color actual.
+
+---
+
+### `mouseMoved(int x, int y)`
+
+**En openFrameworks**:  
+Se ejecuta cada vez que el mouse se mueve dentro de la ventana de la aplicación. Recibe las coordenadas actuales.
+
+**En este ejercicio**:  
+Cada movimiento del mouse agrega su posición al vector `particles`. Si el número de partículas excede 100, se elimina la más antigua.
+
+---
+
+### `mousePressed(int x, int y, int button)`
+
+**En openFrameworks**:  
+Se ejecuta cada vez que el usuario presiona un botón del mouse. Se puede usar para interacciones con clics.
+
+**En este ejercicio**:  
+Cambia el color de las partículas generando un nuevo color aleatorio.
+
+---
+
+## ✅ Resultado esperado
+
+- Se abre una ventana con fondo negro.
+- Cada vez que el mouse se mueve, se dibujan círculos en su trayectoria.
+- El color de los círculos cambia aleatoriamente cada vez que se hace clic.
+
+Esta aplicación es útil como primer acercamiento a la programación interactiva con openFrameworks, manejo de vectores y dibujo básico en pantalla.
+
+---
+## Actividad 3
+### 🔧 Experimento: Cambiar Círculos por Cuadrados
+
+Para modificar el código y que en lugar de círculos se dibujen cuadrados, hice el siguiente cambio en el archivo `ofApp.cpp`:
+
+### Modificación en el archivo `ofApp.cpp`
+
+Busqué esta línea en la función `draw()`:
+
+```cpp
+ofDrawCircle(pos.x, pos.y, 50);
+```
+Y la cambié por:
+
+```cpp
+
+ofDrawRectangle(pos.x - 25, pos.y - 25, 50, 50);
+```
+### ¿Por qué este cambio?
+ofDrawCircle(pos.x, pos.y, 50) dibuja un círculo de radio 50 en las coordenadas (pos.x, pos.y).
+
+ofDrawRectangle(pos.x - 25, pos.y - 25, 50, 50) dibuja un cuadrado con un tamaño de 50x50. El -25 es para centrar el cuadrado en las mismas coordenadas que antes estaba el círculo (porque ofDrawRectangle dibuja el rectángulo desde la esquina superior izquierda).
+
+Con este cambio, en lugar de círculos, la aplicación dibujará cuadrados cada vez que el mouse se mueva.
+# Actividad 5
+
+En esta actividad, se profundiza en el concepto de punteros de manera práctica. El ejercicio que realizamos permite seleccionar una esfera y moverla con el mouse. El puntero es un concepto clave para modificar objetos de manera eficiente en la memoria.
+
+## Respuestas a las preguntas
+
+### ¿Cuál es la definición de un puntero?
+Un puntero es una variable que almacena la dirección de memoria de otra variable. En lugar de almacenar el valor directamente, almacena la ubicación en la memoria donde se encuentra dicho valor. Esto permite acceder y manipular la variable de manera indirecta a través de su dirección en memoria.
+
+### ¿Dónde está el puntero?
+El puntero está en la clase `ofApp`, en la variable `selectedSphere`, que es un puntero a un objeto de tipo `Sphere`:
+
+```cpp
+Sphere* selectedSphere;
+```
+### ¿Cómo se inicializa el puntero?
+El puntero selectedSphere se inicializa en el método setup() como nullptr, lo que significa que al inicio no está apuntando a ninguna esfera.
+```cpp
+
+
+selectedSphere = nullptr;
+```
+De esta manera, indicamos que no hay ninguna esfera seleccionada cuando se inicia el programa.
+
+### ¿Para qué se está usando el puntero?
+El puntero selectedSphere se usa para mantener la referencia de la esfera que el usuario selecciona al hacer clic sobre ella. Una vez seleccionada, el puntero se actualiza para apuntar a esa esfera específica. Luego, en el método update(), el puntero permite mover esa esfera seleccionada a la nueva posición del mouse.
+
+### ¿Qué es exactamente lo que está almacenado en el puntero?
+El puntero selectedSphere almacena la dirección de memoria de un objeto de tipo Sphere. Cuando el usuario hace clic en una esfera, el puntero se actualiza para apuntar al objeto Sphere correspondiente en el vector spheres.
+
+### Actividad 6
+El código presentado tiene un problema relacionado con la selección de la esfera. El problema es que no se está actualizando correctamente el puntero selectedSphere cuando el mouse es movido. Esto significa que aunque puedes seleccionar una esfera con el click, no puedes seguir moviéndola si la dejas presionada y mueves el mouse.
+
+### Problema:
+El código solo mueve la esfera en el método update() si el puntero selectedSphere no es nullptr, pero este puntero solo se actualiza al hacer clic en una esfera (en mousePressed). Esto significa que si se mueve el mouse después de hacer clic en una esfera, no se actualiza su posición constantemente, ya que mouseMoved no tiene ningún efecto en el código.
+
+### Solución:
+El problema se soluciona al hacer que la esfera seleccionada también se mueva mientras el mouse se mueve. Esto se logra de manera sencilla implementando la lógica en el método mouseMoved(), de modo que el puntero selectedSphere siga la posición del mouse incluso si no se está haciendo clic continuamente.
+
+Código corregido:
+``` cpp
+//--------------------------------------------------------------
+void ofApp::mouseMoved(int x, int y ) {
+    // Si hay una esfera seleccionada, se actualiza su posición
+    if (selectedSphere != nullptr) {
+        selectedSphere->update(x, y);
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::mousePressed(int x, int y, int button){
+    if(button == OF_MOUSE_BUTTON_LEFT){
+        for (auto sphere : spheres) {
+            float distance = ofDist(x, y, sphere->getX(), sphere->getY());
+            if (distance < sphere->getRadius()) {
+                selectedSphere = sphere;
+                break;
+            }
+        }
+    }
+}
+```
+## Actividad 7
+### 1. ¿Qué sucede cuando presionas la tecla “c”?
+
+Cuando presionas la tecla "c", el programa intenta crear un objeto Sphere y lo almacena en el vector globalVector. Sin embargo, al crear el objeto en el stack (en la versión original), el objeto localSphere se destruye inmediatamente después de salir del ámbito de la función createObjectInStack. Esto causa que el puntero en el vector apunte a una dirección de memoria inválida. Por lo tanto, al intentar acceder a este objeto en el vector para dibujarlo, se está accediendo a memoria no válida.
+
+### 2. ¿Por qué ocurre esto?
+
+Esto ocurre porque cuando un objeto se crea en el stack, su memoria se gestiona de forma automática. Esto significa que cuando la función createObjectInStack termina, el objeto localSphere es destruido y su memoria es liberada, pero el puntero en globalVector sigue apuntando a una dirección de memoria que ya no es válida.
+
+Por otro lado, al crear el objeto en el heap usando new, la memoria del objeto se asigna dinámicamente, lo que significa que el objeto permanece en memoria incluso después de que la función termine su ejecución. Esto evita que el puntero en globalVector apunte a una dirección de memoria no válida.
+
+Modificación de la función createObjectInStack
+
+```cpp
+
+
+void ofApp::createObjectInStack() {
+    // Crear objeto en el heap usando 'new'
+    Sphere* heapSphere = new Sphere(ofRandomWidth(), ofRandomHeight(), 30);
+    globalVector.push_back(heapSphere);
+    ofLog() << "Object created in heap: Position (" << heapSphere->x << ", " << heapSphere->y << ")";
+    heapSphere->draw();
+}
+```
+Explicación de la corrección
+La función ahora crea el objeto Sphere dinámicamente en el heap en lugar de en el stack. Esto resuelve el problema de la destrucción del objeto cuando sale del ámbito de la función. El puntero heapSphere se agrega al globalVector, y como el objeto ahora persiste en memoria, se puede acceder a él posteriormente para dibujarlo.
+
+Conclusión
+El problema en el código original es que los objetos se estaban creando en el stack, lo que causaba que los punteros en globalVector apuntasen a memoria que se liberaba al salir de la función. Al crear los objetos en el heap, los punteros permanecen válidos, lo que soluciona el problema y permite que los objetos se dibujen correctamente.
+
+### Actividad 8
+
+## 1. Crear objetos en el `heap`
+
+Los objetos deben crearse en el `heap` cuando necesitan **persistir más allá del contexto de la función** en la que fueron creados.
+
+> El `stack` solo mantiene los objetos mientras la función en la que fueron creados esté en ejecución. Una vez que la función termina, los objetos se destruyen automáticamente. Para evitar esto, se utiliza el `heap` con `new`. Los objetos creados en el `heap` no se destruyen automáticamente: hay que liberar su memoria con `delete`.
+
+### Cuándo usar `new` en el `heap`
+
+- Cuando el objeto debe vivir durante toda la ejecución del programa (o hasta que lo elimines manualmente).
+- Si no sabes cuánto tiempo vas a necesitar el objeto.
+- Si quieres que el objeto sea accesible fuera del alcance de la función que lo crea.
+
+### Ejemplos de uso del `heap`
+
+- Almacenar objetos en un contenedor como un `std::vector`, donde deben sobrevivir varias iteraciones.
+- Cuando la cantidad de objetos es **variable** y no puedes predecir su tamaño con anticipación.
+
+---
+
+## 2. Crear objetos en `memoria global`
+
+Los objetos deben crearse en la memoria global cuando necesitas que sean **accesibles desde cualquier parte del programa** durante toda la ejecución.
+
+> Un objeto en memoria global existe durante toda la vida del programa. Puede ser útil para compartir estados o configuraciones sin pasarlos constantemente entre funciones.
+
+### Cuándo usar `memoria global`
+
+- Cuando el objeto debe ser accesible desde cualquier parte del código.
+- Cuando necesitas que el objeto tenga un estado compartido por toda la aplicación.
+
+### Ejemplos de uso de `memoria global`
+
+- Un objeto de configuración general de la aplicación (gráficos, sonido, etc.).
+- Un controlador de entrada o sistema de eventos que debe estar disponible en todo momento.
+
+---
+
+## 3. Crear objetos en el `stack`
+
+Los objetos deben crearse en el `stack` cuando solo necesitas que existan **durante la ejecución de una función**.
+
+> Los objetos en el `stack` son muy eficientes y se destruyen automáticamente al salir del ámbito donde fueron declarados.
+
+### Cuándo usar el `stack`
+
+- Cuando el objeto solo se necesita dentro de una función.
+- Cuando no necesitas que el objeto persista o se comparta entre distintas funciones.
+
+### Ejemplos de uso del `stack`
+
+- Variables temporales dentro de funciones, como auxiliares de cálculo.
+- Objetos de uso inmediato sin necesidad de persistencia o compartición.
+
+---
+
+## Recomendaciones generales
+
+- Usa el `stack` por defecto cuando sea posible, ya que es más eficiente.
+- Usa el `heap` si necesitas control total sobre el ciclo de vida del objeto.
+- Usa memoria global con moderación, ya que puede dificultar el mantenimiento del código.
+
+# Actividad 9 – Manejo de Memoria en C++
+
+## Objetivo
+Analizar el comportamiento del programa al manipular objetos almacenados dinámicamente en el heap y eliminarlos correctamente.
+
+---
+
+## Código analizado
+
+### Archivo `ofApp.h`
+```cpp
+#pragma once
+
+#include "ofMain.h"
+
+class ofApp : public ofBaseApp{
+public:
+    void setup();
+    void update();
+    void draw();
+
+    void keyPressed(int key);
+    void mousePressed(int x, int y, int button);
+
+private:
+    vector<ofVec2f*> heapObjects;
+};
+```
+### ¿Qué sucede cuando presionas la tecla “f”?
+Cuando se presiona la tecla 'f', se ejecuta el siguiente bloque de código:
+
+```cpp
+
+if(!heapObjects.empty()) {
+    delete heapObjects.back();   // Libera la memoria del último objeto del heap
+    heapObjects.pop_back();      // Elimina el puntero del vector
+}
+Esto hace dos cosas importantes:
+
+delete heapObjects.back();
+Libera de la memoria heap el último objeto (ofVec2f*) que fue creado con new. Esto evita una fuga de memoria (memory leak).
+
+heapObjects.pop_back();
+Elimina el puntero del vector heapObjects, asegurando que ya no se acceda a un puntero inválido.
+```
+### Análisis detallado
+Este bloque es una forma segura de eliminar objetos del heap:
+
+Primero se verifica si el vector no está vacío con if(!heapObjects.empty()).
+
+Luego se accede al último puntero, se libera con delete.
+
+Finalmente se borra la referencia del vector con pop_back.
+
+Esto es fundamental porque:
+
+Si se elimina el puntero del vector sin hacer delete, el objeto sigue en memoria (fuga).
+
+Si se hace delete pero no pop_back, el vector tendría punteros colgantes (dangling pointers).
+
+RETO
+Codigo fuente:
+
+### .h
+```cpp
+#pragma once
+
+#include "ofMain.h"
+
+class ofApp : public ofBaseApp {
+public:
+    void setup();
+    void update();
+    void draw();
+
+    void keyPressed(int key);
+    void mousePressed(int x, int y, int button);
+
+    // Funciones auxiliares
+    glm::vec3 screenToWorldRay(int x, int y);
+    bool rayIntersectsSphere(const glm::vec3& rayOrigin, const glm::vec3& rayDir,
+        const glm::vec3& sphereCenter, float radius, glm::vec3& intersectionPoint);
+
+    // Cámara
+    ofEasyCam cam;
+
+    // Esferas
+    vector<glm::vec3> esferaPosiciones;
+    int xStep = 50;
+    int yStep = 50;
+    float distDiv = 100.0f;
+    float amplitud = 100.0f;
+    float radioEsfera = 10.0f;
+
+    // Esfera seleccionada
+    bool esferaSeleccionada = false;
+    glm::vec3 esferaSeleccionadaPos;
+    glm::vec3 puntoInterseccion;
+};
+```
+### cpp
+
+```cpp
+#include "ofApp.h"
+
+void ofApp::setup() {
+    ofBackground(10);
+    cam.setDistance(600);
+
+    esferaPosiciones.clear();
+    for (int x = -ofGetWidth() / 2; x < ofGetWidth() / 2; x += xStep) {
+        for (int y = -ofGetHeight() / 2; y < ofGetHeight() / 2; y += yStep) {
+            float distancia = ofDist(x, y, 0, 0);
+            float z = cos(distancia / distDiv) * amplitud;
+            esferaPosiciones.push_back(glm::vec3(x, y, z));
+        }
+    }
+}
+
+void ofApp::update() {}
+
+void ofApp::draw() {
+    cam.begin();
+
+    for (auto& pos : esferaPosiciones) {
+        ofDrawSphere(pos, radioEsfera);
+    }
+
+    if (esferaSeleccionada) {
+        ofSetColor(ofColor::yellow);
+        ofDrawSphere(esferaSeleccionadaPos, radioEsfera * 1.5);
+        ofSetColor(255);
+    }
+
+    cam.end();
+
+    if (esferaSeleccionada) {
+        ofDrawBitmapStringHighlight("Esfera seleccionada en: \n" +
+            ofToString(esferaSeleccionadaPos, 2) +
+            "\nIntersección en: \n" + ofToString(puntoInterseccion, 2), 20, 20);
+    }
+
+    ofDrawBitmapStringHighlight("Controles:\nW/S: Aumentar/disminuir amplitud\nA/D: Aumentar/disminuir separación\nR: Reiniciar escena",
+        20, ofGetHeight() - 100);
+}
+
+void ofApp::mousePressed(int x, int y, int button) {
+    glm::vec3 rayOrigin = cam.getPosition();
+    glm::vec3 mouseRay = screenToWorldRay(x, y);
+
+    esferaSeleccionada = false;
+
+    for (auto& pos : esferaPosiciones) {
+        glm::vec3 interseccion;
+        if (rayIntersectsSphere(rayOrigin, mouseRay, pos, radioEsfera, interseccion)) {
+            esferaSeleccionada = true;
+            esferaSeleccionadaPos = pos;
+            puntoInterseccion = interseccion;
+            break;
+        }
+    }
+}
+
+void ofApp::keyPressed(int key) {
+    if (key == 'w') amplitud += 10;
+    if (key == 's') amplitud -= 10;
+    if (key == 'a') xStep = yStep = std::max(10, xStep - 5);
+    if (key == 'd') xStep = yStep = std::min(300, xStep + 5);
+    if (key == 'r') setup();  // Reiniciar
+}
+
+// Convierte coordenadas de pantalla a dirección de rayo en el mundo 3D
+glm::vec3 ofApp::screenToWorldRay(int x, int y) {
+    glm::vec3 rayStart = cam.screenToWorld(glm::vec3(x, y, 0));
+    glm::vec3 rayEnd = cam.screenToWorld(glm::vec3(x, y, 1));
+    return glm::normalize(rayEnd - rayStart);
+}
+
+// Intersección rayo-esfera
+bool ofApp::rayIntersectsSphere(const glm::vec3& rayOrigin, const glm::vec3& rayDir,
+    const glm::vec3& sphereCenter, float radius, glm::vec3& intersectionPoint) {
+    glm::vec3 oc = rayOrigin - sphereCenter;
+    float a = glm::dot(rayDir, rayDir);
+    float b = 2.0f * glm::dot(oc, rayDir);
+    float c = glm::dot(oc, oc) - radius * radius;
+    float discriminant = b * b - 4 * a * c;
+
+    if (discriminant >= 0) {
+        float t = (-b - sqrt(discriminant)) / (2.0f * a);
+        intersectionPoint = rayOrigin + t * rayDir;
+        return true;
+    }
+
+    return false;
+}
+```
+
+## 🧠 Tabla de Uso de Memoria en la Aplicación
+
+| **Dato**                                            | **Tipo de Memoria**    | **Descripción**                                                                 |
+|-----------------------------------------------------|-------------------------|---------------------------------------------------------------------------------|
+| `std::vector<glm::vec3> esferaPosiciones`           | Heap (dinámica)         | Almacenamiento dinámico de las posiciones 3D de las esferas. El vector gestiona automáticamente su memoria. |
+| `glm::vec3` (ej. `esferaSeleccionadaPos`, `puntoInterseccion`) | Stack (automática)     | Variables locales/miembro que almacenan vectores 3D, se asignan automáticamente en la pila. |
+| `cam` (`ofEasyCam`)                                 | Stack (automática)      | Se crea una instancia local de cámara. Su memoria se maneja automáticamente al ser un objeto miembro. |
+| `float` (`amplitud`, `radioEsfera`, etc.)           | Stack (automática)      | Variables numéricas simples para controlar el comportamiento de la escena. |
+| Strings temporales (`ofToString(...)`)              | Heap (temporal)         | Las cadenas generadas en tiempo real para mostrar en pantalla son almacenadas temporalmente por el sistema. |
+
+# VIDEO RETO
+
+https://youtu.be/Jw0P11eckvM

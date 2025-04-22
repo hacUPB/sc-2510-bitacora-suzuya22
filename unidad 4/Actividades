@@ -1,0 +1,295 @@
+# Actividad 1
+
+## 1. Explorando el funcionamiento del programa
+
+Tras revisar el código con ayuda de una inteligencia artificial y el depurador en Visual Studio, comprendí que la aplicación construye una especie de “serpiente” interactiva formada por nodos enlazados, los cuales siguen el movimiento del cursor del mouse. Mediante el análisis paso a paso pude observar lo siguiente:
+
+- En la función `setup()`, se generan inicialmente 10 nodos colocados en el centro de la pantalla.  
+- Durante cada ciclo (`update()`), cada nodo ajusta su posición para seguir al nodo que está delante.  
+- El nodo principal se mueve directamente hacia el puntero del mouse.  
+- Al presionar la tecla ‘c’ en el teclado, la lista completa se reinicia (se borra todo).
+
+## 2. Preguntas de repaso
+
+La IA me lanzó algunas preguntas para evaluar lo que había comprendido:
+
+**Pregunta:** ¿Qué efecto tiene ejecutar `addNode()`?  
+**Respuesta:** Se crea un nuevo nodo con las coordenadas indicadas, y este se añade al final de la estructura. Lo confirmé en el depurador al ver que `tail` apuntaba al nuevo nodo y el contador `size` aumentaba.
+
+**Pregunta:** ¿Cómo se reorganizan las posiciones en `update()`?  
+**Respuesta:** Cada nodo copia la posición del que le precede, y el primero de todos sigue al mouse. Lo validé usando puntos de interrupción, viendo cómo los valores se propagaban uno a uno.
+
+## 3. Comparativa: listas enlazadas vs. arreglos
+
+Una lista enlazada consiste en elementos que almacenan tanto sus datos (en este caso, coordenadas x, y) como una referencia al siguiente nodo. Las diferencias clave frente a los arrays son:
+
+- **Ubicación en memoria:** No es necesario que los nodos estén seguidos en memoria.  
+- **Flexibilidad:** El tamaño puede variar en tiempo de ejecución sin esfuerzo.  
+- **Eficiencia en cambios:** Insertar o quitar elementos en medio de la lista es más rápido, ya que solo se modifican referencias.
+
+## 4. Cómo se conectan los nodos
+
+Los nodos están unidos entre sí mediante un puntero llamado `next` que reside dentro de la clase `Node`. Cada uno contiene:
+
+```cpp
+float x, y;       // Posición
+Node* next;       // Enlace al siguiente nodo
+```
+
+La lista tiene referencias tanto al nodo inicial (`head`) como al final (`tail`).
+
+## 5. Control de memoria dinámica
+
+- **Creación de nodos:** Se usa `new` para pedir espacio dinámico:
+  ```cpp
+  Node* newNode = new Node(x, y);
+  ```
+- **Eliminación:** Se libera con `delete` cuando ya no se necesita:
+  ```cpp
+  delete current;
+  ```
+
+## 6. ¿Por qué preferir listas?
+
+Cuando se necesita insertar o eliminar elementos que no están al final:
+
+- **Listas enlazadas:** Solo hay que cambiar referencias (si ya sabes dónde estás) → O(1).  
+- **Arreglos:** Requieren mover todos los elementos posteriores → O(n).
+
+## 7. Evitando fugas de memoria
+
+Este programa se asegura de no dejar memoria sin liberar gracias a:
+
+1. Un destructor (`~LinkedList()`) que llama automáticamente al método `clear()`.  
+2. `clear()` recorre toda la lista y borra cada nodo.  
+3. Al presionar 'c', se llama manualmente a `clear()`.
+
+## 8. Cómo funciona `clear()`
+
+Este proceso elimina todos los nodos:
+
+1. Comienza en el nodo inicial (`head`).  
+2. Guarda una referencia al siguiente.  
+3. Libera el nodo actual.  
+4. Se mueve al siguiente.  
+5. Repite hasta llegar al final.  
+6. Por último, deja `head` y `tail` en `nullptr`.
+
+## 9. Añadiendo nodos al final
+
+Cuando se agrega un nuevo nodo:
+
+1. Se crea un nodo nuevo.  
+2. El puntero del nodo final (`tail->next`) se actualiza para apuntar al nuevo.  
+3. Se redefine `tail` para que sea este nuevo nodo.  
+4. Se incrementa el contador.
+
+**Velocidad:** Este proceso es constante en tiempo (O(1)) porque se tiene acceso directo al final de la lista.
+
+## 10. Aplicación práctica
+
+**Ejemplo ideal:** Un editor de gráficos vectoriales que permita insertar o quitar puntos libremente en cualquier parte del dibujo.
+
+**Ventajas de la lista:**
+- Alta eficiencia para editar el contenido  
+- No necesita realocar memoria como un array  
+- Se ajusta en tamaño según se use
+
+## 11. Diseño de estructuras propias
+
+Para implementar algo similar desde cero, consideraría:
+
+1. **Claridad de responsabilidades:** Cada nodo se enfoca en sus propios datos.  
+2. **Gestión ordenada:** Crear y eliminar nodos solo cuando es necesario.  
+3. **Recorrido optimizado:** Agregar funciones que permitan navegar eficientemente.  
+4. **RAII (Resource Acquisition Is Initialization):** Que los constructores y destructores manejen los recursos automáticamente.
+
+## 12. Comparación entre C++ y C#
+
+**C++:**
+- **Pro:** Tienes control absoluto sobre cómo se usa la memoria.  
+- **Contra:** Puedes cometer errores que generen fugas o referencias inválidas.
+
+**C#:**
+- **Pro:** El recolector de basura hace el trabajo por ti.  
+- **Contra:** Tienes menos control y algo más de consumo en recursos.
+
+## 13. Cómo mejorar el rendimiento
+
+En proyectos de arte generativo u otros que demandan eficiencia, se puede:
+
+1. **Reutilizar nodos:** Usar un sistema de reciclaje de nodos.  
+2. **Actualizar por grupos:** Procesar varios elementos a la vez.  
+3. **Monitoreo:** Utilizar herramientas para revisar consumo de memoria.  
+4. **Punteros inteligentes:** Considerar `unique_ptr` para que liberen solos.
+
+## 14. Comprobaciones realizadas
+
+La IA me sugirió implementar estas validaciones y los resultados fueron correctos:
+
+1. **Verificación inicial:**
+```cpp
+assert(snake.size == 10);
+```
+
+2. **Prueba de movimiento:**
+```cpp
+snake.update(100, 100);
+assert(snake.head->x == 100 && snake.head->y == 100);
+```
+
+3. **Reinicio de la lista:**
+```cpp
+snake.clear();
+assert(snake.size == 0 && snake.head == nullptr);
+```
+
+Los resultados obtenidos reflejan el comportamiento esperado, validando así que el programa opera correctamente.
+
+# Actividad 2
+
+## 1. Comprensión del funcionamiento
+
+### Estructura de Pila (Stack)
+
+Tras el uso de herramientas como una IA y el depurador, logré comprender que:
+
+- Este tipo de estructura funciona bajo el modelo LIFO (último en entrar, primero en salir).
+- Cada elemento está representado por un nodo que guarda una posición (x,y) y un enlace al siguiente nodo.
+- Al presionar la tecla 'a', se añade un nuevo nodo con un círculo en la posición actual del mouse.
+- Al presionar 'd', se elimina el nodo que fue agregado más recientemente.
+
+### Estructura de Cola (Queue)
+
+A partir del análisis, se identificaron los siguientes comportamientos:
+
+- La cola opera bajo el principio FIFO (primero en entrar, primero en salir).
+- Dos punteros (front y rear) permiten controlar el inicio y el final de la cola.
+- Al pulsar 'a', se inserta un nuevo círculo al final.
+- Al pulsar 'd', se elimina el primer círculo que ingresó.
+
+## 2. Evaluaciones de comprensión
+
+La IA propuso una serie de preguntas que fueron confirmadas con el depurador:
+
+**Pila:** ¿Qué ocurre en la memoria cuando se realiza un apilamiento?
+
+- Se reserva memoria para un nuevo nodo mediante `new`, se enlaza con el nodo anterior mediante `next`, y se actualiza el puntero `top` para que apunte al nodo recién creado.
+
+**Cola:** ¿Cómo se modifican los punteros `front` y `rear` al desencolar?
+
+- El puntero `front` avanza al nodo siguiente, y si la cola queda vacía, `rear` también se establece como `nullptr`.
+
+## 3. Validación mediante pruebas
+
+### Stack
+
+**Inserción:**
+```cpp
+for(int i=0; i<5; i++) circleStack.push(i*10, i*10);
+assert(circleStack.top != nullptr);
+```
+
+**Eliminación:**
+```cpp
+circleStack.pop();
+assert(circleStack.top->position.x == 30); // Verifica el nuevo top
+```
+
+### Queue
+
+**Inserción:**
+```cpp
+circleQueue.enqueue(100,100);
+assert(circleQueue.rear->position.x == 100);
+```
+
+**Eliminación:**
+```cpp
+circleQueue.enqueue(200,200);
+circleQueue.dequeue();
+assert(circleQueue.front->position.x == 200);
+```
+
+## Análisis reflexivo sobre la pila
+
+1. **Gestión de memoria dinámica:**
+   - El uso de `new` permite la creación de nodos en tiempo de ejecución.
+   - `delete` se emplea en métodos como `pop()` y `clear()` para liberar la memoria.
+   - Esto otorga un gran control, aunque implica riesgos como fugas de memoria si no se maneja adecuadamente.
+
+2. **Necesidad de liberar memoria:**
+   - Si no se utiliza `delete`, se pueden generar fugas importantes.
+   - En contextos como el arte generativo que requieren ciclos largos de ejecución, esto puede resultar problemático.
+
+3. **Comparación con la STL:**
+   - `std::stack` automatiza la gestión de memoria.
+   - La implementación manual permite personalizar visualmente el comportamiento e integrarlo con librerías como OpenFrameworks.
+
+4. **Aplicaciones de LIFO:**
+   - Muy útil para funciones como "deshacer" en aplicaciones, recorrido en profundidad y parsers.
+
+5. **Manejo de tipos complejos:**
+   - Se debe asegurar la correcta liberación de recursos con destructores o smart pointers. Ejemplo:
+```cpp
+class ComplexNode {
+    ofImage texture;
+    ofVec3f position;
+    ~ComplexNode() { texture.clear(); }
+};
+```
+
+## Autoevaluación - Pila
+
+1. Puedo explicar completamente el uso de `new` y `delete` en esta estructura.
+2. Identifico posibles fugas si se omite `delete` y sé cómo evitarlas.
+3. Implementaría una función que permita buscar un valor sin modificar el `top`.
+4. Comprendo claramente el principio LIFO. Ejemplo: sistema de deshacer acciones.
+5. Para tipos más complejos aplicaría RAII o punteros inteligentes.
+
+## Análisis reflexivo sobre la cola
+
+1. **Asignación dinámica de memoria:**
+   - Se utiliza `new` para agregar nodos al final.
+   - `delete` remueve el nodo del frente.
+
+2. **Complejidad adicional respecto al stack:**
+   - Se requiere mantener sincronizados los punteros `front` y `rear`.
+   - Es esencial controlar el caso en que la cola queda vacía:
+```cpp
+if(front == nullptr) {
+    rear = nullptr; // Fundamental para evitar errores
+}
+```
+
+3. **Aplicaciones del modelo FIFO:**
+   - Común en buffers de animación, sistemas de eventos o colas de impresión.
+
+4. **Cola circular:**
+   - Permite reutilizar la memoria eficientemente.
+```cpp
+rear->next = front; // Cierra el ciclo
+```
+
+5. **Precauciones con punteros:**
+   - Una mala actualización puede hacer perder nodos.
+   - Es fundamental verificar si los punteros están en `nullptr`.
+
+## Autoevaluación - Cola
+
+1. Comprendo cómo funcionan `enqueue` y `dequeue` con `front` y `rear`.
+2. Sé detectar cuando los punteros no se actualizan bien.
+3. Podría desarrollar una cola circular adecuando las operaciones.
+4. Reconozco el modelo FIFO y sus aplicaciones. Ejemplo: sistema de partículas.
+5. Cuido la correcta liberación de memoria en estructuras complejas.
+
+## Conclusiones generales
+
+1. La programación en C++ exige responsabilidad en el manejo de memoria.
+2. Las pilas resultan útiles para operaciones que requieren revertir acciones.
+3. Las colas son esenciales para procesamiento ordenado.
+4. En proyectos de arte generativo, estas estructuras permiten:
+   - Controlar el historial de acciones.
+   - Gestionar partículas visuales.
+   - Administrar dinámicamente elementos gráficos.
+
