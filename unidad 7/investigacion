@@ -1,0 +1,53 @@
+# Que son los vertices?
+
+los vertices son puntos en el espacio 3D que estan determinados por coordenadas y definen la forma de los objetos graficos, cada uno de estos vertices poseen atributos como posicion,
+color y coordenadas de textura
+
+# Con que figura geometrica se dibuja en 3D?
+La figura geometrica con la que se dibuja en 3D es el triangulo, esto debido a que es la figura geometrica mas basica con la cual se puede definir una superficie en el espacio tridimensional
+
+# Que es un shader?
+Un shader es un programa que se ejecuta en la GPU, este programa esta encargado de administrar como se procesan los vertices y los fragmentos (pixeles) durante el renderizado, se usa el lenguaje GLSL para escribirlo
+
+# Como se llaman los grupos de pixeles de un solo triangulo?
+a estos grupos de pixeles se les llama "fragmentos", cada fragmento representa una contribucion a un pixel en la pantalla y contiene informacion como el color y la profundidad (controlado por el Depht), estos fragmentos se generan en el momento de la renderizacion
+
+# Que es el fragment shader?
+Es un tipo de shader que se ejecuta para cada fragmento y esta encargado de determinar el color final de cada pixel en pantalla, aplicando los efectos de iluminacion, texturizado y la transparencia
+
+# Que es el vertex shader?
+Es un tipo de shader que se ejecuta para cada vertices y se encarga de guardar la informacion de posicion final del vertice, tambien puede generar otros valores como colores o coordenadas de textura
+
+# ¿Al proceso de determinar qué píxeles del display va a cubrir cada triángulo de una mesh se le llama?
+Este proceso se llama "rasterización". Durante la rasterización, se determinan los fragmentos que corresponden a cada triángulo y se interpolan los valores necesarios para cada fragmento.
+
+
+# ¿Qué es el render pipeline?
+El render pipeline es la secuencia de pasos que sigue la GPU para convertir los datos de una escena 3D en una imagen 2D en la pantalla. Incluye etapas como la transformación de vértices, ensamblado de primitivas, rasterización, ejecución de shaders y operaciones finales de píxel.
+
+# ¿Hay alguna diferencia entre aplicar un color a una superficie de una mesh o aplicar una textura?
+Sí, hay una diferencia. Aplicar un color significa asignar un valor de color uniforme o por vértice a la superficie. Aplicar una textura implica mapear una imagen sobre la superficie, lo que permite detalles más complejos y variados.
+
+# ¿Cuál es la diferencia entre una textura y un material?
+Una textura es una imagen que se aplica a la superficie de un objeto para darle detalle visual. Un material es una colección de propiedades que define cómo la superficie de un objeto interactúa con la luz, incluyendo texturas, colores, reflectividad y otros parámetros.
+
+# ¿Qué transformaciones se requieren para mover un vértice del 3D world al View Screen?
+Se requieren varias transformaciones:
+
+Transformación del modelo: posiciona el objeto en el mundo.
+
+Transformación de vista: posiciona y orienta la cámara.
+sistemascomputacionales.readthedocs.io
+
+Transformación de proyección: convierte las coordenadas 3D en coordenadas 2D de pantalla.
+
+Estas transformaciones se combinan en una matriz que se aplica a cada vértice en el vertex shader.
+
+# ¿Al proceso de convertir los triángulos en fragmentos se le llama?
+Este proceso también se llama "rasterización". Es la etapa en la que se determinan los fragmentos que corresponden a cada triángulo para su posterior procesamiento en el fragment shader.
+
+# ¿Qué es el framebuffer?
+El framebuffer es una memoria en la GPU que almacena la imagen final que se mostrará en la pantalla. Contiene información de color, profundidad y otros datos necesarios para componer la imagen final.
+
+# ¿Para qué se usa el Z-buffer o depth buffer en el render pipeline?
+El Z-buffer, o depth buffer, se utiliza para almacenar la información de profundidad de cada píxel. Permite determinar qué objetos están delante de otros y asegurar que los objetos más cercanos a la cámara oculten a los que están detrás.

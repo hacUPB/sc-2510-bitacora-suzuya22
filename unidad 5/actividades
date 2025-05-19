@@ -468,3 +468,159 @@ Se llama al método correspondiente según la clase real del objeto (Dog::makeSo
 Impacto en el Rendimiento
 El uso de métodos virtuales introduce una pequeña sobrecarga en el rendimiento debido a la búsqueda en la vtable. Sin embargo, la ventaja es que facilita la programación más flexible y mantenible.
 
+## 4. Reflexión Individual
+### ¿Dónde se almacenan los datos y métodos de una clase en la memoria?
+La ubicación en memoria de los datos de una clase depende del contexto en el que se declare la instancia: pueden almacenarse en la pila (stack) o en la memoria dinámica (heap). Sin embargo, si los miembros son declarados como static, se ubican en una zona de memoria global compartida. Por su parte, los métodos de una clase también residen en la memoria global, salvo en el caso de los métodos virtuales, los cuales generan una estructura adicional llamada vtable (tabla de funciones virtuales). Esta tabla también se aloja en memoria global, y cada objeto con métodos virtuales incluirá un puntero a su vtable correspondiente.
+
+### ¿Cómo se comportan estas estructuras en tiempo de ejecución?
+El uso de métodos virtuales y vtables introduce una sobrecarga en el sistema, ya que impiden ciertas optimizaciones por parte del compilador. Esto implica que el programa necesitará más memoria y tiempo de ejecución para resolver dinámicamente las llamadas a funciones virtuales.
+
+### Conclusión: implicaciones en el diseño de sistemas
+Comprender estos detalles es fundamental para diseñar estructuras que usen herencia y polimorfismo de forma eficaz. Si bien estas herramientas facilitan la extensión del código y promueven la reutilización, también plantean interrogantes sobre su costo en rendimiento y cuándo es apropiado utilizarlas.
+
+### Sesión 3: Implementación Interna de Encapsulamiento, Herencia y Polimorfismo
+Objetivo: Comprender cómo se implementan internamente los principios de encapsulamiento, herencia y polimorfismo en C++.
+
+###Encapsulamiento a Nivel Interno
+En C++, el control de acceso a los miembros de una clase se implementa mediante los modificadores private, protected y public, pero esta verificación ocurre únicamente en tiempo de compilación. Es decir, el compilador restringe el acceso a nivel de código fuente, pero estas restricciones no existen en el código binario generado. Por eso, aunque un miembro privado no pueda ser accedido directamente en el código fuente, sigue existiendo físicamente en el objeto, y puede ser manipulado usando técnicas de bajo nivel, lo cual se considera comportamiento indefinido.
+
+### Ejemplo básico de control de acceso:
+
+cpp
+Copiar
+Editar
+class AccessControl {
+private:
+    int privateVar;
+protected:
+    int protectedVar;
+public:
+    int publicVar;
+    AccessControl() : privateVar(1), protectedVar(2), publicVar(3) {}
+};
+
+int main() {
+    AccessControl ac;
+    ac.publicVar = 10;         // Acceso permitido
+    // ac.protectedVar = 20;   // Error de compilación
+    // ac.privateVar = 30;     // Error de compilación
+    return 0;
+}
+Violando el Encapsulamiento
+Propósito del experimento:
+Demostrar cómo se puede romper el principio de encapsulamiento en C++ utilizando aritmética de punteros y reinterpret_cast.
+
+### 1. Definición de una clase con miembros privados
+cpp
+Copiar
+Editar
+class MyClass {
+private:
+    int secret1;
+    float secret2;
+    char secret3;
+public:
+    MyClass(int s1, float s2, char s3) : secret1(s1), secret2(s2), secret3(s3) {}
+    void printMembers() const {
+        std::cout << "secret1: " << secret1 << "\n";
+        std::cout << "secret2: " << secret2 << "\n";
+        std::cout << "secret3: " << secret3 << "\n";
+    }
+};
+### 2. Acceso legal vs. acceso ilegal
+cpp
+Copiar
+Editar
+int main() {
+    MyClass obj(42, 3.14f, 'A');
+    // std::cout << obj.secret1; // Provoca error de compilación
+    obj.printMembers();          // Acceso permitido a través de método público
+    return 0;
+}
+### 3. Acceso forzado a miembros privados
+cpp
+Copiar
+Editar
+int main() {
+    MyClass obj(42, 3.14f, 'A');
+
+    int* ptrInt = reinterpret_cast<int*>(&obj);
+    float* ptrFloat = reinterpret_cast<float*>(ptrInt + 1);
+    char* ptrChar = reinterpret_cast<char*>(ptrFloat + 1);
+
+    std::cout << "Acceso forzado a miembros privados:\n";
+    std::cout << "secret1: " << *ptrInt << "\n";
+    std::cout << "secret2: " << *ptrFloat << "\n";
+    std::cout << "secret3: " << *ptrChar << "\n";
+
+    return 0;
+}
+###Reflexiones clave
+¿Qué es el encapsulamiento?
+Es el mecanismo que permite restringir el acceso directo a ciertos componentes de un objeto, protegiendo su integridad y garantizando un comportamiento predecible.
+
+¿Por qué se considera importante proteger los datos de una clase?
+Evita modificaciones accidentales, reduce el acoplamiento entre clases, simplifica el mantenimiento y promueve la abstracción, mostrando solo lo necesario.
+
+¿Qué es reinterpret_cast y por qué representa un riesgo?
+Este operador permite reinterpretar un bloque de memoria como otro tipo de dato, lo cual puede romper la seguridad del programa y generar errores críticos.
+
+¿Por qué fue posible acceder a los miembros privados?
+Porque los datos existen físicamente en la memoria del objeto y reinterpret_cast permite interpretarlos directamente, ignorando los controles del compilador.
+
+¿Qué consecuencias tiene usar estas técnicas en producción?
+Puede provocar corrupción de memoria, fallos en tiempo de ejecución y errores que dificultan la portabilidad del código.
+
+¿Qué nos dice esto sobre las barreras de encapsulamiento?
+Estas barreras no son absolutas; son una convención de diseño que puede ser violada si se lo desea, aunque hacerlo conlleva riesgos importantes.
+
+Herencia y Organización en Memoria
+Cuando una clase deriva de otra, los atributos de la clase base se almacenan antes que los de la clase derivada en la memoria del objeto. Esto permite que una instancia de la clase derivada pueda comportarse como una instancia de la base.
+
+Ejemplo de organización en memoria:
+cpp
+Copiar
+Editar
+class Base {
+public:
+    int baseVar;
+};
+
+class Derived : public Base {
+public:
+    int derivedVar;
+};
+
+int main() {
+    Derived d;
+    std::cout << "Dirección de d: " << &d << std::endl;
+    std::cout << "Dirección de baseVar: " << &(d.baseVar) << std::endl;
+    std::cout << "Dirección de derivedVar: " << &(d.derivedVar) << std::endl;
+    return 0;
+}
+Observaciones:
+Los miembros de la clase base se almacenan primero.
+
+Los miembros de la clase derivada se colocan a continuación.
+
+Si existen más niveles de herencia, los datos se almacenan en orden jerárquico.
+
+Ejemplo con herencia múltiple:
+
+Nivel de Herencia	Clase	Miembro	Dirección Relativa	Offset
+Nivel 0 (Base)	GrandParent	grandParentVar	Base + 0x00	0
+Nivel 1	Parent	parentVar	Base + 0x04	4
+Nivel 2	Child	childVar	Base + 0x08	8
+Representación visual del objeto:
+
+lua
+Copiar
+Editar
+Dirección baja  +------------------+
+Base + 0x00     | grandParentVar   | ← GrandParent
+                +------------------+
+Base + 0x04     | parentVar        | ← Parent
+                +------------------+
+Base + 0x08     | childVar         | ← Child
+                +------------------+
+Dirección alta
